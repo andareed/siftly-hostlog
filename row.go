@@ -1,6 +1,7 @@
 package main
 
 import (
+	"hash/fnv"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -19,9 +20,21 @@ var columnWeights = []float64{
 type renderedRow struct {
 	cols   []string
 	height int
+	id     uint64
 }
 
-func (r renderedRow) String() string {
+// method on the struct
+func (r renderedRow) ComputeID() uint64 {
+	h := fnv.New64a()
+	for _, col := range r.cols {
+		norm := strings.ToLower(strings.TrimSpace(col))
+		h.Write([]byte(norm))
+		h.Write([]byte{0})
+	}
+	return h.Sum64()
+}
+
+func (r *renderedRow) String() string {
 	var rowAsString strings.Builder
 
 	for _, col := range r.cols {

@@ -31,7 +31,7 @@ type model struct {
 	cursor              int // index into rows
 	lastVisibleRowCount int
 	currentMode         mode
-	markedRows          map[int]string // map row index to color code
+	markedRows          map[uint64]MarkColor // map row index to color code
 	filterRegex         *regexp.Regexp
 	filteredIndices     []int // to store the list of indicides that match the current regex
 	filterInput         textinput.Model
@@ -46,10 +46,12 @@ func initialModel(data [][]string) *model {
 	}
 
 	for _, csvRow := range data[1:] {
+		//TODO: Move this to a construct NewRenderedRow in the row.go file
 		row := renderedRow{
 			cols:   csvRow, // store columns directly
 			height: 1,      // assume 1 for now; adjust if multiline logic added later
 		}
+		row.id = row.ComputeID() // Should be always called therefore should be in the constructor
 		rows = append(rows, row)
 	}
 
@@ -63,7 +65,7 @@ func initialModel(data [][]string) *model {
 		header:      header,
 		rows:        rows,
 		currentMode: modView,
-		markedRows:  make(map[int]string),
+		markedRows:  make(map[uint64]MarkColor),
 		filterInput: fi,
 	}
 }
@@ -123,23 +125,35 @@ func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	//return m, nil
 }
 
+func (m *model) MarkCurrent(colour MarkColor) {
+	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
+		return // This messed up as the cursor isn't at a point in the viewport
+	}
+	master := m.filteredIndices[m.cursor] // Gets the row
+	id := m.rows[master].id
+	if colour == MarkNone {
+		delete(m.markedRows, id)
+		log.Printf("Cursor: %d with Stable ID %d has been unmarked", m.cursor, id)
+	} else {
+		log.Printf("Cursor: %d with Stable ID %d is being marked with color %s", m.cursor, id, colour)
+		m.markedRows[id] = colour
+	}
+}
+
 func (m *model) handleMarkingModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	//TODO: We can axe this switch now in favour or just using the enum
 	switch msg.String() {
 	case "r":
-		log.Printf("Cursor: %d has been marked with red", m.cursor)
-		m.markedRows[m.cursor] = "red"
+		m.MarkCurrent(MarkRed)
 		m.currentMode = modView
 	case "g":
-		log.Printf("Cursor: %d has been marked with green", m.cursor)
-		m.markedRows[m.cursor] = "green"
+		m.MarkCurrent(MarkGreen)
 		m.currentMode = modView
 	case "a":
-		log.Printf("Cursor: %d has been marked with amber", m.cursor)
-		m.markedRows[m.cursor] = "amber"
+		m.MarkCurrent(MarkAmber)
 		m.currentMode = modView
 	case "c":
-		log.Printf("Cursor: %d has been cleared of a mark", m.cursor)
-		delete(m.markedRows, m.cursor)
+		m.MarkCurrent(MarkNone)
 		m.currentMode = modView
 	case "esc":
 		m.currentMode = modView
@@ -280,7 +294,7 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 
 	rowIdx := m.filteredIndices[filteredIdx]
 	row := m.rows[rowIdx]
-	marker := m.getRowMarker(rowIdx)
+	marker := m.getRowMarker(row.id)
 	content := row.Render(cellStyle, m.viewport.Width-2, columnWeights) // Adjust for marker width
 	lines := strings.Split(content, "\n")
 
@@ -292,13 +306,13 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 	return rendered, row.height, true
 }
 
-func (m *model) getRowMarker(index int) string {
+func (m *model) getRowMarker(index uint64) string {
 	switch m.markedRows[index] {
-	case "red":
+	case MarkRed:
 		return redMarker
-	case "green":
+	case MarkGreen:
 		return greenMarker
-	case "amber":
+	case MarkAmber:
 		return amberMarker
 	default:
 		return defaultMarker
@@ -318,9 +332,9 @@ func (m *model) renderTable() string {
 
 	// // Render cursor row first and make sure its 'selected'
 	filteredCursor := m.filteredIndices[cursor]
-	cursorRow := m.rows[filteredCursor]
+	cursorRow := &m.rows[filteredCursor]
 	currentRenderedRow := selectedStyle.Render(cursorRow.Render(cellStyle, viewPortWidth-2, columnWeights)) // sets cursorRow.height
-	marker := m.getRowMarker(cursor)
+	marker := m.getRowMarker(cursorRow.id)
 	lines := strings.Split(currentRenderedRow, "\n")
 
 	for i := range lines {
