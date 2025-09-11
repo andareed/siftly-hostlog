@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -17,6 +18,7 @@ const (
 	modView mode = iota
 	modeFilter
 	modeMarking
+	modeComent
 )
 
 //TODO Lets save all of its as JSON for when working on.
@@ -32,10 +34,12 @@ type model struct {
 	lastVisibleRowCount int
 	currentMode         mode
 	markedRows          map[uint64]MarkColor // map row index to color code
+	commentRows         map[uint64]string    // map row index to string to store comments
+	showOnlyMarked      bool
 	filterRegex         *regexp.Regexp
 	filteredIndices     []int // to store the list of indicides that match the current regex
 	filterInput         textinput.Model
-	commentInput        textinput.Model
+	commentInput        textarea.Model
 }
 
 func initialModel(data [][]string) *model {
@@ -61,18 +65,27 @@ func initialModel(data [][]string) *model {
 	fi.CharLimit = 156
 	fi.Width = 50
 
+	ca := textarea.New()
+	ca.Placeholder = "Comment:"
+	ca.Focus()
+	ca.CharLimit = 256
+	//ca.Width = 150
+
 	return &model{
-		header:      header,
-		rows:        rows,
-		currentMode: modView,
-		markedRows:  make(map[uint64]MarkColor),
-		filterInput: fi,
+		header:         header,
+		rows:           rows,
+		currentMode:    modView,
+		markedRows:     make(map[uint64]MarkColor),
+		commentRows:    make(map[uint64]string),
+		filterInput:    fi,
+		commentInput:   ca,
+		showOnlyMarked: false,
 	}
 }
 
 func (m *model) Init() tea.Cmd {
 	m.applyFilter()
-	log.Println("Sourcely has been initialised")
+	log.Println("siftly-hostlog: Initialised")
 	return nil
 }
 
@@ -98,6 +111,8 @@ func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleMarkingModeKey(msg)
 	case modeFilter:
 		return m.handleFilterKey(msg)
+	case modeComent:
+		return m.handleCommentKey(msg)
 	}
 
 	return m, nil
@@ -113,7 +128,7 @@ func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			log.Printf("Input boxed classed as focussed so we can apply filter and reset mode back to View wth text : %s", m.filterInput.Value())
 			m.setFilterPattern(m.filterInput.Value())
 			m.currentMode = modView
-			m.commentInput.Blur()
+			m.filterInput.Blur()
 			//m.applyFilter()
 		}
 		return m, cmd
@@ -123,6 +138,26 @@ func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 	//return m, nil
+}
+
+func (m *model) handleCommentKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	log.Println("handleCommentKey called..")
+	switch msg.String() {
+	case "enter", "esc":
+		log.Println("Enter or Esc pressed")
+		if m.commentInput.Focused() {
+			m.CommentCurrent(m.commentInput.Value())
+			m.currentMode = modView
+			m.commentInput.Blur()
+		}
+		return m, cmd
+	default:
+		log.Println("Generic character received and adding to the filter Input")
+		m.commentInput, cmd = m.commentInput.Update(msg)
+		return m, cmd
+	}
+
 }
 
 func (m *model) MarkCurrent(colour MarkColor) {
@@ -169,10 +204,20 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "m":
 		m.currentMode = modeMarking
 		log.Println("Entering Mode: Marking")
+	case "M":
+		// Show Marks only
+		log.Println("Toggle for Show Marks Only has been pressed")
+		m.showOnlyMarked = !m.showOnlyMarked
+		m.applyFilter()
 	case "f":
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
 		log.Println("Entering Mode: Filter (Focus Box)")
+	case "c":
+		m.currentMode = modeComent
+		m.commentInput.Focus()
+		m.loadOrClearCommentBox()
+		log.Println("Entering Mode: Comment (Comment Box)")
 	case "down", "j":
 		if m.cursor < len(m.rows)-1 {
 			m.cursor++
@@ -191,6 +236,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "right", "l":
 		m.viewport.ScrollRight(4)
 	}
+
 	if m.ready {
 		m.viewport.SetContent((m.renderTable()))
 	}
@@ -212,6 +258,32 @@ func (m *model) pageUp() {
 	}
 }
 
+func (m *model) loadOrClearCommentBox() {
+	log.Printf("loadOrClearCommentBox called../n")
+	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
+		return
+	}
+	idx := m.filteredIndices[m.cursor]
+	hashId := m.rows[idx].id
+	if comment, ok := m.commentRows[hashId]; ok {
+		m.commentInput.SetValue(comment)
+	} else {
+		m.commentInput.SetValue("")
+	}
+
+}
+
+func (m *model) CommentCurrent(comment string) {
+	log.Printf("CommentCurrent called..\n")
+	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
+		return
+	}
+	idx := m.filteredIndices[m.cursor]
+	hashId := m.rows[idx].id
+	m.commentRows[hashId] = comment
+	log.Printf("Setting Comment[%s] to Index[%d] on HashID[%d]\n", comment, idx, hashId)
+}
+
 // region Filtering
 
 func (m *model) setFilterPattern(pattern string) error {
@@ -229,27 +301,54 @@ func (m *model) setFilterPattern(pattern string) error {
 	return nil
 }
 
+func (m *model) includeRow(row renderedRow) bool {
+	log.Printf("includeRow called")
+
+	if m.showOnlyMarked {
+		if _, ok := m.markedRows[row.id]; !ok {
+			log.Printf("row[%d]: EXCLUDE (not marked)", row.id)
+			return false
+		}
+	}
+
+	if m.filterRegex != nil {
+		match := m.filterRegex.MatchString(row.String())
+		log.Printf("applyFilter: filter applied checking row[%s] against pattern[%s] \n", row.String(), m.filterRegex)
+		if !match {
+			return false
+		}
+	}
+	log.Printf("applyFilter: %s is to be included", row.String())
+	return true
+}
+
 func (m *model) applyFilter() {
 	log.Printf("applyFilter called")
 	m.filteredIndices = m.filteredIndices[:0] // reset slice
-	if m.filterRegex == nil {
-		log.Println("applyFilter: No filter present in textbox so all incides being added to filteredIncidices")
+
+	if m.filterRegex == nil && !m.showOnlyMarked {
+		log.Println("applyFilter: No filter text and showOnly marked is false there all indices being added to filteredIncidices")
 		// Maybe used clamp?
 		for i := range m.rows {
 			m.filteredIndices = append(m.filteredIndices, i)
 		}
-	} else {
-		for i, row := range m.rows {
-			log.Printf("applyFilter: filter applied checking row[%s] against pattern[%s] \n", row.String(), m.filterRegex)
-			if m.filterRegex.MatchString(row.String()) {
-				log.Printf("Pattern matched - %d index added to filteredIndices", i)
-				m.filteredIndices = append(m.filteredIndices, i)
-			}
-		}
 		if len(m.filteredIndices) == 0 {
-			// No matches found prevent index panics
-			m.cursor = -1
+			m.cursor = 1
 		}
+		m.viewport.SetContent(m.renderTable())
+		return
+	}
+
+	for i, row := range m.rows {
+		log.Printf("applyFilter: filter applied checking row[%s] against pattern[%s] \n", row.String(), m.filterRegex)
+		if m.includeRow(row) {
+			log.Printf("Row included - %d index added to filteredIndices", i)
+			m.filteredIndices = append(m.filteredIndices, i)
+		}
+	}
+	if len(m.filteredIndices) == 0 {
+		// No matches found prevent index panics
+		m.cursor = -1
 	}
 	// Load content back into the viewport now its been filtered?
 	m.viewport.SetContent(m.renderTable())
@@ -267,11 +366,13 @@ func (m *model) footerView() string {
 
 	switch m.currentMode {
 	case modView:
-		sb.WriteString("(q)uit | (m)ark | toggle (s)how only marks | (e)xport marks | (w)rite | (c)omment | (f)ilter text | (n/N)ext mark  | Navigations (Up j Down k) ")
+		sb.WriteString("(q)uit  (↑/↓ j/k)nav  (/)filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment  (x)export  (w)write")
 	case modeMarking:
 		sb.WriteString("Choose a color: (r)ed (g)reen (a)mber (c)lear | esc:cancel")
 	case modeFilter:
 		sb.WriteString(inputStyle.Render(m.filterInput.View()))
+	case modeComent:
+		sb.WriteString(inputStyle.Render(m.commentInput.View()))
 	}
 
 	return sb.String()
@@ -320,14 +421,20 @@ func (m *model) getRowMarker(index uint64) string {
 }
 
 func (m *model) renderTable() string {
+	log.Println("renderTable called")
 	viewportHeight := m.viewport.Height
 	viewPortWidth := m.viewport.Width
 	cursor := m.cursor
 
-	if len(m.filteredIndices) == 0 || cursor < 0 || len(m.filteredIndices) <= cursor {
+	if len(m.filteredIndices) == 0 || cursor < 0 {
+		log.Printf("renderTable: Returning blank filteredIndices Lenght[%d] cursor[%d]", len(m.filteredIndices), cursor)
 		return ""
 	}
-
+	//TODO: Defect here as we should be using the row count not the display index to maintain between a filter and non-filtered list
+	if len(m.filteredIndices) < cursor {
+		m.cursor = 0
+		cursor = 0
+	}
 	var renderedRows []string
 
 	// // Render cursor row first and make sure its 'selected'

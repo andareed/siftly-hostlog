@@ -22,7 +22,7 @@ func main() {
 	}
 	defer cleanup()
 
-	log.Println("Starting Siftly-Hostlog")
+	log.Println("siftly-hostlog: Started")
 	// After flags, the remaining args are positional
 	args := flag.Args()
 	if len(args) < 1 {
