@@ -209,6 +209,13 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		log.Println("Toggle for Show Marks Only has been pressed")
 		m.showOnlyMarked = !m.showOnlyMarked
 		m.applyFilter()
+	case "n":
+		// Next mark jump
+		log.Println("Here we go; jumping to the next mark")
+		m.jumpToNextMark()
+	case "shift+n", "N":
+		log.Println("Back once again: jumping to the previous mark")
+		m.jumpToPreviousMark()
 	case "f":
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
@@ -271,6 +278,54 @@ func (m *model) loadOrClearCommentBox() {
 		m.commentInput.SetValue("")
 	}
 
+}
+
+func (m *model) jumpToNextMark() {
+	log.Println("jumpToNextMark callled..")
+	n := len(m.filteredIndices)
+	if n == 0 {
+		log.Println("filterIndicies is empty")
+		return
+	}
+	if m.cursor < 0 {
+		log.Println("Cursor at 0 or below")
+		return
+	}
+
+	for i := m.cursor + 1; i < len(m.filteredIndices); i++ {
+		rowIdx := m.filteredIndices[i]
+		row := m.rows[rowIdx]
+		if _, ok := m.markedRows[row.id]; ok {
+			log.Printf("Next mark found at %d \n", i)
+			m.cursor = i
+			return
+		}
+
+	}
+	log.Println("No next mark has been found")
+}
+
+func (m *model) jumpToPreviousMark() {
+	log.Println("jumpToPreviousMark called..")
+	n := len(m.filteredIndices)
+	if n == 0 {
+		log.Println("filteredIndicies is emtpy")
+	}
+	if m.cursor < 0 {
+		log.Println("Cursor at 0 or below")
+	}
+
+	for i := m.cursor - 1; i >= 0; i-- {
+		rowIdx := m.filteredIndices[i]
+		row := m.rows[rowIdx]
+		if _, ok := m.markedRows[row.id]; ok {
+			log.Println("Previous mark has been found")
+			m.cursor = i
+			return
+		}
+
+	}
+	log.Println("No previous mark has been found")
 }
 
 func (m *model) CommentCurrent(comment string) {
