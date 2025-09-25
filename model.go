@@ -531,6 +531,13 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 		return "", 0, false
 	}
 
+	rowBgStyle := rowStyle
+	rowFgStyle := rowTextStyle
+	if filteredIdx == m.cursor {
+		rowBgStyle = rowSelectedStyle
+		rowFgStyle = rowSelectedTextstyle
+	}
+
 	rowIdx := m.filteredIndices[filteredIdx]
 	row := m.rows[rowIdx]
 	//TODO: Add a comment indicator around about here
@@ -538,22 +545,26 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 	_, commentPresent := m.commentRows[row.id]
 	standardMarker := m.getRowMarker(row.id)
 
-	firstLineMarker := standardMarker + "   "
-	additionalLineMarker := standardMarker + "   "
+	// Standard mark seems to reset any bg colour attempts to need to render anything preceding it
+	firstLineMarker := standardMarker + rowBgStyle.Render("   ")
+	additionalLineMarker := standardMarker + rowBgStyle.Render("   ")
 
 	if commentPresent {
-		firstLineMarker = standardMarker + "[*]"
+		firstLineMarker = standardMarker + rowBgStyle.Render("[*]")
 	}
 
 	content := row.Render(cellStyle, m.viewport.Width-3, columnWeights) // Adjust for marker width
+
 	lines := strings.Split(content, "\n")
 
 	for i := range lines {
+		left := additionalLineMarker
+		right := rowBgStyle.Render(rowFgStyle.Render(lines[i]))
 		if i == 0 { // first line
-			lines[i] = firstLineMarker + lines[i] // prepend marker
-		} else {
-			lines[i] = additionalLineMarker + lines[i] // prepend marker
+			left = firstLineMarker
 		}
+		lines[i] = left + right
+		// lines[i] = rowBgStyle.Render(lines[i])
 	}
 
 	rendered := strings.Join(lines, "\n")
@@ -564,11 +575,11 @@ func (m *model) getRowMarker(index uint64) string {
 
 	switch m.markedRows[index] {
 	case MarkRed:
-		return redMarker
+		return redMarker.Render(pillMarker)
 	case MarkGreen:
-		return greenMarker
+		return greenMarker.Render(pillMarker)
 	case MarkAmber:
-		return amberMarker
+		return amberMarker.Render(pillMarker)
 	default:
 		return defaultMarker
 	}
@@ -578,6 +589,8 @@ func (m *model) renderTable() string {
 	log.Println("renderTable called")
 	viewportHeight := m.viewport.Height
 	viewPortWidth := m.viewport.Width
+	_ = viewPortWidth // TODO: I'm going to use this just need to remember why and where
+
 	cursor := m.cursor
 
 	if len(m.filteredIndices) == 0 || cursor < 0 {
@@ -592,25 +605,26 @@ func (m *model) renderTable() string {
 	var renderedRows []string
 
 	// // Render cursor row first and make sure its 'selected'
-	filteredCursor := m.filteredIndices[cursor]
-	cursorRow := &m.rows[filteredCursor]
-	currentRenderedRow := selectedStyle.Render(cursorRow.Render(cellStyle, viewPortWidth-2, columnWeights)) // sets cursorRow.height
-	marker := m.getRowMarker(cursorRow.id)
-	lines := strings.Split(currentRenderedRow, "\n")
+	//filteredCursor := m.filteredIndices[cursor]
+	// cursorRow := &m.rows[filteredCursor]
+	//currentRenderedRow := selectedStyle.Render(cursorRow.Render(cellStyle, viewPortWidth-2, columnWeights)) // sets cursorRow.height
+	cursorRenderedRow, cursorRenderedRowHeight, _ := m.renderRowAt(cursor)
+	// marker := m.getRowMarker(cursorRow.id)
+	// lines := strings.Split(selectedStyle.Render(cursorRenderedRow), "\n")
 	if m.drawerOpen {
 		m.refreshDrawerContent()
 	}
-	//TODO - Think the renderatcursor needs to be improved
+	//TODO - Think the renderatcursor needs to be improved to reuse the exist render at.
 
-	for i := range lines {
-		lines[i] = marker + " " + lines[i] // prepend marker
-	}
+	// for i := range lines {
+	// lines[i] = marker + " " + lines[i] // prepend marker
+	// }
 
-	rendered := strings.Join(lines, "\n")
+	// rendered := strings.Join(lines, "\n")
+	// cursorRenderedRow = rowSelectedStyle.Render(cursorRenderedRow)
+	renderedRows = append([]string{cursorRenderedRow}, renderedRows...)
 
-	renderedRows = append(renderedRows, rendered)
-
-	heightFree := viewportHeight - cursorRow.height
+	heightFree := viewportHeight - cursorRenderedRowHeight
 
 	upIndex := cursor - 1
 	downIndex := cursor + 1
