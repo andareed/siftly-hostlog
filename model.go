@@ -29,6 +29,9 @@ type model struct {
 	header              renderedRow // single row for column titles in headerview
 	rows                []renderedRow
 	viewport            viewport.Model
+	drawerPort          viewport.Model
+	drawerOpen          bool
+	drawerHeight        int
 	ready               bool
 	cursor              int // index into rows
 	lastVisibleRowCount int
@@ -40,11 +43,15 @@ type model struct {
 	filteredIndices     []int // to store the list of indicides that match the current regex
 	filterInput         textinput.Model
 	commentInput        textarea.Model
+	terminalHeight      int
+	terminalWidth       int
 }
 
 func initialModel(data [][]string) *model {
 	rows := make([]renderedRow, 0, len(data))
 	header := renderedRow{
+		// TODO: How to add additional columns cleanly
+		// cols:   append([]string{"Comment"}, data[0]...),
 		cols:   data[0],
 		height: 1,
 	}
@@ -80,6 +87,9 @@ func initialModel(data [][]string) *model {
 		filterInput:    fi,
 		commentInput:   ca,
 		showOnlyMarked: false,
+		drawerPort:     viewport.New(0, 0),
+		drawerHeight:   8,
+		drawerOpen:     false,
 	}
 }
 
@@ -94,13 +104,42 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		return m.updateKey(msg)
 	case tea.WindowSizeMsg:
-		m.viewport = viewport.New(msg.Width-6, msg.Height-5)
+
+		// Set Drawer Width to match the above to keep them in line
+		// Height gets set when C is pressed so should not needed.
+		//m.drawerPort.Width = msg.Width - 6
+		//if m.drawerOpen {
+		//m.viewport.Height = msg.Height - 5 - m.drawerHeight
+		//}
+		m.terminalHeight = msg.Height
+		m.terminalWidth = msg.Width
+		m.viewport = viewport.New(0, 0) // TODO: PRetty sure this is redundant
+		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
 		m.ready = true
 		m.viewport.SetContent(m.renderTable())
+
 		return m, nil
 	}
 
 	return m, nil
+}
+
+func (m *model) recomputeLayout(height int, width int) {
+	// Computes the layout based on whats being rendered
+	log.Println("recomputeLayout called..")
+	height -= 5
+	width -= 6
+	if m.drawerOpen {
+		height -= m.drawerHeight
+		m.drawerPort.Width = width // Minus out the padding.
+		m.commentInput.SetWidth(width)
+		m.commentInput.SetHeight(8)
+		m.drawerPort.Height = 8
+		m.drawerPort.Width = width
+	}
+	log.Printf("Update Received of type Windows Size Message. ViewPort is [%d]", m.viewport.Height)
+	m.viewport.Height = height
+	m.viewport.Width = width
 }
 
 func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -124,6 +163,7 @@ func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "enter", "esc":
 		log.Println("Enter or ESC Pressed")
+		//TODO: Defect here, when we edit twice this is no longer focussed. Why?
 		if m.filterInput.Focused() {
 			log.Printf("Input boxed classed as focussed so we can apply filter and reset mode back to View wth text : %s", m.filterInput.Value())
 			m.setFilterPattern(m.filterInput.Value())
@@ -147,7 +187,8 @@ func (m *model) handleCommentKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "enter", "esc":
 		log.Println("Enter or Esc pressed")
 		if m.commentInput.Focused() {
-			m.CommentCurrent(m.commentInput.Value())
+			// TODO: If the viewport is being used , will the input still be focussed, think so?
+			m.CommentCurrent(m.commentInput.Value()) // Save the comment to the map
 			m.currentMode = modView
 			m.commentInput.Blur()
 		}
@@ -220,12 +261,20 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
 		log.Println("Entering Mode: Filter (Focus Box)")
+	case "e":
+		if m.drawerOpen {
+			m.commentInput.Focus()
+			m.currentMode = modeComent
+		}
 	case "c":
-		m.currentMode = modeComent
-		m.commentInput.Focus()
-		m.loadOrClearCommentBox()
-		log.Println("Entering Mode: Comment (Comment Box)")
+		//m.currentMode = modeComent
+		//m.commentInput.Focus()
+		//m.loadOrClearCommentBox()
+		m.drawerOpen = !m.drawerOpen
+		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
+		log.Printf("handleViewModeKey: Toggling Drawer (bottom view above the footer) now see to [%t]", m.drawerOpen)
 	case "down", "j":
+		log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]", m.cursor, len(m.rows), m.drawerOpen)
 		if m.cursor < len(m.rows)-1 {
 			m.cursor++
 		}
@@ -243,6 +292,12 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "right", "l":
 		m.viewport.ScrollRight(4)
 	}
+
+	//if m.drawerOpen {
+	//var cmd tea.Cmd
+	//jm.drawerPort, cmd = m.drawerPort.Update(msg)
+	//return m, cmd
+	//}
 
 	if m.ready {
 		m.viewport.SetContent((m.renderTable()))
@@ -265,19 +320,26 @@ func (m *model) pageUp() {
 	}
 }
 
-func (m *model) loadOrClearCommentBox() {
-	log.Printf("loadOrClearCommentBox called../n")
-	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
-		return
+func (m *model) getCommentContent(rowIdx uint64) string {
+	// Probably want some error checking around the rowIdx
+	if c, ok := m.commentRows[rowIdx]; ok && c != "" {
+		return c
 	}
-	idx := m.filteredIndices[m.cursor]
-	hashId := m.rows[idx].id
-	if comment, ok := m.commentRows[hashId]; ok {
-		m.commentInput.SetValue(comment)
-	} else {
-		m.commentInput.SetValue("")
-	}
+	return "(no comments)"
+}
 
+func (m *model) refreshDrawerContent() {
+	log.Printf("refreshDrawerContent called..")
+	currentComment := m.getCommentContent(m.currentRowHashID())
+	log.Printf("Comment Input and Drawer Port being set to: %s", currentComment)
+	m.commentInput.SetValue(currentComment)
+	m.drawerPort.SetContent(currentComment)
+}
+
+func (m *model) currentRowHashID() uint64 {
+	rowIdx := m.filteredIndices[m.cursor]
+	hashId := m.rows[rowIdx].id
+	return hashId
 }
 
 func (m *model) jumpToNextMark() {
@@ -421,13 +483,20 @@ func (m *model) footerView() string {
 
 	switch m.currentMode {
 	case modView:
-		sb.WriteString("(q)uit  (↑/↓ j/k)nav  (/)filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment  (x)export  (w)write")
+		if m.drawerOpen {
+			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (/)filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment (e)edit-comment (x)export  (w)write")
+		} else {
+			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (/)filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment  (x)export  (w)write")
+		}
 	case modeMarking:
 		sb.WriteString("Choose a color: (r)ed (g)reen (a)mber (c)lear | esc:cancel")
 	case modeFilter:
 		sb.WriteString(inputStyle.Render(m.filterInput.View()))
 	case modeComent:
-		sb.WriteString(inputStyle.Render(m.commentInput.View()))
+		sb.WriteString("enter:save | esc:cancel")
+		//TODO:Not sure if i need this for drawerPort yet?
+		//sb.WriteString(m.drawerPort.View())
+		//sb.WriteString(inputStyle.Render(m.commentInput.View()))
 	}
 
 	return sb.String()
@@ -439,6 +508,20 @@ func (m *model) View() string {
 	}
 	borderedViewPort := tableStyle.Render(m.viewport.View())
 
+	if m.drawerOpen {
+		drawerTitle := appstyle.Render("Comments")
+		switch m.currentMode {
+		case modView:
+			log.Printf("View should render comment in viewport with Height [%d], Width [%d]", m.drawerPort.Height, m.drawerPort.Width)
+			drawer := tableStyle.Render(
+				drawerTitle + "\n" + m.drawerPort.View())
+			return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, m.headerView(), borderedViewPort, drawer, m.footerView()))
+		case modeComent:
+			drawer := tableStyle.Render(
+				drawerTitle + "\n" + m.commentInput.View())
+			return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, m.headerView(), borderedViewPort, drawer, m.footerView()))
+		}
+	}
 	return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, m.headerView(), borderedViewPort, m.footerView()))
 	// return m.viewport.View() + "\n(↑/↓ to scroll, q to quit)"
 }
@@ -450,12 +533,27 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 
 	rowIdx := m.filteredIndices[filteredIdx]
 	row := m.rows[rowIdx]
-	marker := m.getRowMarker(row.id)
-	content := row.Render(cellStyle, m.viewport.Width-2, columnWeights) // Adjust for marker width
+	//TODO: Add a comment indicator around about here
+
+	_, commentPresent := m.commentRows[row.id]
+	standardMarker := m.getRowMarker(row.id)
+
+	firstLineMarker := standardMarker + "   "
+	additionalLineMarker := standardMarker + "   "
+
+	if commentPresent {
+		firstLineMarker = standardMarker + "[*]"
+	}
+
+	content := row.Render(cellStyle, m.viewport.Width-3, columnWeights) // Adjust for marker width
 	lines := strings.Split(content, "\n")
 
 	for i := range lines {
-		lines[i] = marker + " " + lines[i] // prepend marker
+		if i == 0 { // first line
+			lines[i] = firstLineMarker + lines[i] // prepend marker
+		} else {
+			lines[i] = additionalLineMarker + lines[i] // prepend marker
+		}
 	}
 
 	rendered := strings.Join(lines, "\n")
@@ -463,6 +561,7 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 }
 
 func (m *model) getRowMarker(index uint64) string {
+
 	switch m.markedRows[index] {
 	case MarkRed:
 		return redMarker
@@ -498,6 +597,10 @@ func (m *model) renderTable() string {
 	currentRenderedRow := selectedStyle.Render(cursorRow.Render(cellStyle, viewPortWidth-2, columnWeights)) // sets cursorRow.height
 	marker := m.getRowMarker(cursorRow.id)
 	lines := strings.Split(currentRenderedRow, "\n")
+	if m.drawerOpen {
+		m.refreshDrawerContent()
+	}
+	//TODO - Think the renderatcursor needs to be improved
 
 	for i := range lines {
 		lines[i] = marker + " " + lines[i] // prepend marker
