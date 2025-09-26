@@ -197,6 +197,8 @@ func (m *model) handleCommentKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.CommentCurrent(m.commentInput.Value()) // Save the comment to the map
 			m.currentMode = modView
 			m.commentInput.Blur()
+			m.viewport.SetContent(m.renderTable())
+
 		}
 		return m, cmd
 	default:
@@ -240,6 +242,7 @@ func (m *model) handleMarkingModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "esc":
 		m.currentMode = modView
 	}
+	m.viewport.SetContent(m.renderTable()) //TODO: Should the Setcontent and Renders be part of a proper update call. This is just ha hack (same as marking with a comment)
 	return m, nil
 
 }
@@ -267,6 +270,9 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
 		log.Println("Entering Mode: Filter (Focus Box)")
+	case "F":
+		log.Println("Shift F, clearing Filter")
+		m.setFilterPattern("") // Set the filter to nothing which will clear
 	case "e":
 		if m.drawerOpen {
 			m.commentInput.Focus()
@@ -299,12 +305,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.viewport.ScrollRight(4)
 	}
 
-	//if m.drawerOpen {
-	//var cmd tea.Cmd
-	//jm.drawerPort, cmd = m.drawerPort.Update(msg)
-	//return m, cmd
-	//}
-
+	//TODO: DON'T THINK WE SHOULD BE RENDERING TABLE EVERY TIME TBH
 	if m.ready {
 		m.viewport.SetContent((m.renderTable()))
 	}
