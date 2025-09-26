@@ -288,6 +288,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "shift+n", "N":
 		log.Println("Back once again: jumping to the previous mark")
 		m.jumpToPreviousMark()
+		m.ready = true
 	case "f":
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
@@ -484,7 +485,7 @@ func (m *model) applyFilter() {
 			m.filteredIndices = append(m.filteredIndices, i)
 		}
 		if len(m.filteredIndices) == 0 {
-			m.cursor = 1
+			m.cursor = 0
 		}
 		m.viewport.SetContent(m.renderTable())
 		return
@@ -635,8 +636,9 @@ func (m *model) renderTable() string {
 
 	cursor := m.cursor
 
-	if len(m.filteredIndices) == 0 || cursor < 0 {
+	if len(m.filteredIndices) == 0 && cursor < 0 {
 		log.Printf("renderTable: Returning blank filteredIndices Lenght[%d] cursor[%d]", len(m.filteredIndices), cursor)
+
 		return ""
 	}
 	//TODO: Defect here as we should be using the row count not the display index to maintain between a filter and non-filtered list
