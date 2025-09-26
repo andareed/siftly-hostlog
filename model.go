@@ -317,9 +317,9 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if m.cursor > 0 {
 			m.cursor--
 		}
-	case "u":
+	case "u", tea.KeyPgUp.String():
 		m.pageUp()
-	case "d":
+	case "d", tea.KeyPgDown.String():
 		m.pageDown()
 
 	case "left", "h":
@@ -520,9 +520,9 @@ func (m *model) footerView() string {
 	switch m.currentMode {
 	case modView:
 		if m.drawerOpen {
-			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment (e)edit-comment (x)export  (w)write")
+			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark (u/PgUp) Page Up (d/PgDwn) (c)comment (e)edit-comment (x)export  (w)write")
 		} else {
-			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment  (x)export  (w)write")
+			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark (u/PgUp) Page Up (d/PgDwn) Page Down (c)comment  (x)export  (w)write")
 		}
 	case modeMarking:
 		sb.WriteString("Choose a color: (r)ed (g)reen (a)mber (c)lear | esc:cancel")
