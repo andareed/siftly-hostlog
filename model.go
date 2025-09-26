@@ -5,6 +5,7 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -46,6 +47,7 @@ type model struct {
 	commentInput        textarea.Model
 	terminalHeight      int
 	terminalWidth       int
+	pageRowSize         int
 }
 
 func initialModel(data [][]string) *model {
@@ -310,15 +312,15 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) pageDown() {
-	if m.cursor+m.lastVisibleRowCount < len(m.rows) {
-		m.cursor += m.lastVisibleRowCount
+	if m.cursor+m.pageRowSize < len(m.rows) {
+		m.cursor += m.pageRowSize
 	} else {
 		m.cursor = len(m.rows) - 1
 	}
 }
 
 func (m *model) pageUp() {
-	m.cursor -= m.lastVisibleRowCount
+	m.cursor -= m.pageRowSize
 	if m.cursor < 0 {
 		m.cursor = 0
 	}
@@ -478,7 +480,9 @@ func (m *model) applyFilter() {
 // endregion
 
 func (m *model) headerView() string {
-	return headerStyle.Render(m.header.Render(cellStyle, m.viewport.Width, columnWeights))
+	// Max width of RowNumbers, plus the size of the pillmarker,a nd comment marker
+	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) + utf8.RuneCountInString(pillMarker) + utf8.RuneCountInString(commentMarker) // +3 is the padding for whether a comment [*]
+	return headerStyle.Render(strings.Repeat(" ", markerWidth) + m.header.Render(cellStyle, m.viewport.Width-4, columnWeights))
 	// return headerStyle.Render("Time,Host,Details,Appliance,MAC Address,IPv6 Address,")
 }
 
@@ -544,24 +548,23 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 
 	rowIdx := m.filteredIndices[filteredIdx]
 	row := m.rows[rowIdx]
-	//TODO: Add a comment indicator around about here
 
 	_, commentPresent := m.commentRows[row.id]
 	standardMarker := m.getRowMarker(row.id)
 
 	// figure out how wide the row number gutter needs to be
-	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) + 3 // +3 is your padding
+	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) + utf8.RuneCountInString(commentMarker) // +3 is your padding
 
 	// Standard mark seems to reset any bg colour attempts to need to render anything preceding it
 	firstLineMarker := standardMarker + rowBgStyle.Render(fmt.Sprintf("%*d", markerWidth, row.originalIndex))
 	additionalLineMarker := standardMarker + rowBgStyle.Render(strings.Repeat(" ", markerWidth))
 
 	if commentPresent {
-		firstLineMarker = standardMarker + rowBgStyle.Render("[*]"+fmt.Sprintf("%*d", markerWidth-3, row.originalIndex))
+		firstLineMarker = standardMarker + rowBgStyle.Render(commentMarker+fmt.Sprintf("%*d", markerWidth-utf8.RuneCountInString(commentMarker), row.originalIndex))
 		//firstLineMarker = standardMarker + rowBgStyle.Render("[*]")
 	}
-
-	content := row.Render(cellStyle, m.viewport.Width-3, columnWeights) // Adjust for marker width
+	//TODO Replace:4 with the width of marker, and comment
+	content := row.Render(cellStyle, m.viewport.Width-4, columnWeights) // Adjust for marker width
 
 	lines := strings.Split(content, "\n")
 
@@ -661,7 +664,7 @@ func (m *model) renderTable() string {
 		}
 		break
 	}
-
+	m.pageRowSize = rowCount
 	m.lastVisibleRowCount = 4
 	// Combine rendered rows into a string with proper vertical order
 	var b strings.Builder

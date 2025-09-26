@@ -4,8 +4,12 @@ import "github.com/charmbracelet/lipgloss"
 
 var (
 	// Styles
-	appstyle         = lipgloss.NewStyle().Margin(1, 2)
-	headerStyle      = lipgloss.NewStyle().Bold(true).Padding(0, 1)
+	appstyle = lipgloss.NewStyle().Margin(1, 2)
+	//headerStyle      = lipgloss.NewStyle().Bold(true).Padding(0, 0)
+	headerStyle = lipgloss.NewStyle().BorderStyle(lipgloss.Border{
+		Left:  " ",
+		Right: " ",
+	}).BorderLeft(true).BorderRight(true)
 	rowStyle         = lipgloss.NewStyle()
 	rowSelectedStyle = lipgloss.NewStyle().Background(lipgloss.Color("#3a3a3a"))
 
@@ -24,8 +28,9 @@ var (
 	redMarker     = lipgloss.NewStyle().Foreground(lipgloss.Color("1"))
 	greenMarker   = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
 	amberMarker   = lipgloss.NewStyle().Foreground(lipgloss.Color("3"))
-	defaultMarker = " " // or "▐" with neutral color if preferred
+	defaultMarker = " " // defaultMarker is used to replace pillMarker when no RAG has been marked agaist a record
 	pillMarker    = "▐"
+	commentMarker = "[*]"
 )
 
 // func (r *renderedRow) Height() int {
