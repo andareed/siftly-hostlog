@@ -18,9 +18,10 @@ var columnWeights = []float64{
 }
 
 type renderedRow struct {
-	cols   []string
-	height int
-	id     uint64
+	cols          []string
+	height        int
+	id            uint64
+	originalIndex int // Essentially the row number of the source, not a unique ID
 }
 
 // method on the struct

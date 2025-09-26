@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"strings"
@@ -52,18 +53,21 @@ func initialModel(data [][]string) *model {
 	header := renderedRow{
 		// TODO: How to add additional columns cleanly
 		// cols:   append([]string{"Comment"}, data[0]...),
-		cols:   data[0],
-		height: 1,
+		cols:          data[0],
+		height:        1,
+		originalIndex: 0,
 	}
 
-	for _, csvRow := range data[1:] {
+	for i, csvRow := range data[1:] {
 		//TODO: Move this to a construct NewRenderedRow in the row.go file
 		row := renderedRow{
 			cols:   csvRow, // store columns directly
 			height: 1,      // assume 1 for now; adjust if multiline logic added later
 		}
 		row.id = row.ComputeID() // Should be always called therefore should be in the constructor
+		row.originalIndex = i + 1
 		rows = append(rows, row)
+
 	}
 
 	fi := textinput.New()
@@ -325,7 +329,7 @@ func (m *model) getCommentContent(rowIdx uint64) string {
 	if c, ok := m.commentRows[rowIdx]; ok && c != "" {
 		return c
 	}
-	return "(no comments)"
+	return "" // No comment, so returning blank
 }
 
 func (m *model) refreshDrawerContent() {
@@ -545,12 +549,16 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 	_, commentPresent := m.commentRows[row.id]
 	standardMarker := m.getRowMarker(row.id)
 
+	// figure out how wide the row number gutter needs to be
+	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) + 3 // +3 is your padding
+
 	// Standard mark seems to reset any bg colour attempts to need to render anything preceding it
-	firstLineMarker := standardMarker + rowBgStyle.Render("   ")
-	additionalLineMarker := standardMarker + rowBgStyle.Render("   ")
+	firstLineMarker := standardMarker + rowBgStyle.Render(fmt.Sprintf("%*d", markerWidth, row.originalIndex))
+	additionalLineMarker := standardMarker + rowBgStyle.Render(strings.Repeat(" ", markerWidth))
 
 	if commentPresent {
-		firstLineMarker = standardMarker + rowBgStyle.Render("[*]")
+		firstLineMarker = standardMarker + rowBgStyle.Render("[*]"+fmt.Sprintf("%*d", markerWidth-3, row.originalIndex))
+		//firstLineMarker = standardMarker + rowBgStyle.Render("[*]")
 	}
 
 	content := row.Render(cellStyle, m.viewport.Width-3, columnWeights) // Adjust for marker width
