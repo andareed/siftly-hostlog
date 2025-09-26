@@ -519,9 +519,9 @@ func (m *model) footerView() string {
 	switch m.currentMode {
 	case modView:
 		if m.drawerOpen {
-			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (/)filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment (e)edit-comment (x)export  (w)write")
+			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment (e)edit-comment (x)export  (w)write")
 		} else {
-			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (/)filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment  (x)export  (w)write")
+			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark  (c)comment  (x)export  (w)write")
 		}
 	case modeMarking:
 		sb.WriteString("Choose a color: (r)ed (g)reen (a)mber (c)lear | esc:cancel")
