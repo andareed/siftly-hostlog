@@ -9,6 +9,7 @@ debug.log
 # Example/test data
 hostlog.csv
 .coolnames.used
+*.json
 
 # IDE/editor settings
 .vscode/

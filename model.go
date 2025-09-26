@@ -50,54 +50,76 @@ type model struct {
 	pageRowSize         int
 }
 
-func initialModel(data [][]string) *model {
-	rows := make([]renderedRow, 0, len(data))
-	header := renderedRow{
-		// TODO: How to add additional columns cleanly
-		// cols:   append([]string{"Comment"}, data[0]...),
-		cols:          data[0],
-		height:        1,
-		originalIndex: 0,
-	}
-
-	for i, csvRow := range data[1:] {
-		//TODO: Move this to a construct NewRenderedRow in the row.go file
-		row := renderedRow{
-			cols:   csvRow, // store columns directly
-			height: 1,      // assume 1 for now; adjust if multiline logic added later
-		}
-		row.id = row.ComputeID() // Should be always called therefore should be in the constructor
-		row.originalIndex = i + 1
-		rows = append(rows, row)
-
-	}
-
+func (m *model) InitialiseUI() {
 	fi := textinput.New()
 	fi.Placeholder = "Regex Filter..."
-	fi.Focus()
+	//fi.Focus()
 	fi.CharLimit = 156
 	fi.Width = 50
 
 	ca := textarea.New()
 	ca.Placeholder = "Comment:"
-	ca.Focus()
+	//ca.Focus()
 	ca.CharLimit = 256
-	//ca.Width = 150
 
-	return &model{
-		header:         header,
-		rows:           rows,
-		currentMode:    modView,
-		markedRows:     make(map[uint64]MarkColor),
-		commentRows:    make(map[uint64]string),
-		filterInput:    fi,
-		commentInput:   ca,
-		showOnlyMarked: false,
-		drawerPort:     viewport.New(0, 0),
-		drawerHeight:   13,
-		drawerOpen:     false,
-	}
+	m.filterInput = fi
+	m.commentInput = ca
+
+	m.showOnlyMarked = false
+	m.drawerPort = viewport.New(0, 0)
+	m.drawerHeight = 13 // TODO:should be a better way of calcing this rather than hardcoding
+	m.drawerOpen = false
 }
+
+// func initialModel(data [][]string) *model {
+// 	// Is passed the CSV as an array of strings and initialises the model as a set of rows.
+// 	rows := make([]renderedRow, 0, len(data))
+// 	header := renderedRow{
+// 		// TODO: How to add additional columns cleanly
+// 		// cols:   append([]string{"Comment"}, data[0]...),
+// 		cols:          data[0],
+// 		height:        1,
+// 		originalIndex: 0,
+// 	}
+
+// 	for i, csvRow := range data[1:] {
+// 		//TODO: Move this to a construct NewRenderedRow in the row.go file
+// 		row := renderedRow{
+// 			cols:   csvRow, // store columns directly
+// 			height: 1,      // assume 1 for now; adjust if multiline logic added later
+// 		}
+// 		row.id = row.ComputeID() // Should be always called therefore should be in the constructor
+// 		row.originalIndex = i + 1
+// 		rows = append(rows, row)
+
+// 	}
+
+// 	fi := textinput.New()
+// 	fi.Placeholder = "Regex Filter..."
+// 	fi.Focus()
+// 	fi.CharLimit = 156
+// 	fi.Width = 50
+
+// 	ca := textarea.New()
+// 	ca.Placeholder = "Comment:"
+// 	ca.Focus()
+// 	ca.CharLimit = 256
+// 	//ca.Width = 150
+
+// 	return &model{
+// 		header:         header,
+// 		rows:           rows,
+// 		currentMode:    modView,
+// 		markedRows:     make(map[uint64]MarkColor),
+// 		commentRows:    make(map[uint64]string),
+// 		filterInput:    fi,
+// 		commentInput:   ca,
+// 		showOnlyMarked: false,
+// 		drawerPort:     viewport.New(0, 0),
+// 		drawerHeight:   13,
+// 		drawerOpen:     false,
+// 	}
+// }
 
 func (m *model) Init() tea.Cmd {
 	m.applyFilter()
@@ -270,7 +292,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
 		log.Println("Entering Mode: Filter (Focus Box)")
-	case "F":
+	case "shift+f", "F":
 		log.Println("Shift F, clearing Filter")
 		m.setFilterPattern("") // Set the filter to nothing which will clear
 	case "e":
@@ -303,6 +325,11 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.viewport.ScrollLeft(4) // tune step
 	case "right", "l":
 		m.viewport.ScrollRight(4)
+	case "w":
+		log.Printf("handleViewModeKey: key_press[w] calling SaveMeta with filename")
+		if err := SaveModel(m, "snapshot.json"); err != nil { /* handle */
+		}
+
 	}
 
 	//TODO: DON'T THINK WE SHOULD BE RENDERING TABLE EVERY TIME TBH
@@ -484,7 +511,6 @@ func (m *model) headerView() string {
 	// Max width of RowNumbers, plus the size of the pillmarker,a nd comment marker
 	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) + utf8.RuneCountInString(pillMarker) + utf8.RuneCountInString(commentMarker) // +3 is the padding for whether a comment [*]
 	return headerStyle.Render(strings.Repeat(" ", markerWidth) + m.header.Render(cellStyle, m.viewport.Width-4, columnWeights))
-	// return headerStyle.Render("Time,Host,Details,Appliance,MAC Address,IPv6 Address,")
 }
 
 func (m *model) footerView() string {
@@ -621,23 +647,12 @@ func (m *model) renderTable() string {
 	var renderedRows []string
 
 	// // Render cursor row first and make sure its 'selected'
-	//filteredCursor := m.filteredIndices[cursor]
-	// cursorRow := &m.rows[filteredCursor]
-	//currentRenderedRow := selectedStyle.Render(cursorRow.Render(cellStyle, viewPortWidth-2, columnWeights)) // sets cursorRow.height
 	cursorRenderedRow, cursorRenderedRowHeight, _ := m.renderRowAt(cursor)
-	// marker := m.getRowMarker(cursorRow.id)
-	// lines := strings.Split(selectedStyle.Render(cursorRenderedRow), "\n")
+
 	if m.drawerOpen {
 		m.refreshDrawerContent()
 	}
-	//TODO - Think the renderatcursor needs to be improved to reuse the exist render at.
 
-	// for i := range lines {
-	// lines[i] = marker + " " + lines[i] // prepend marker
-	// }
-
-	// rendered := strings.Join(lines, "\n")
-	// cursorRenderedRow = rowSelectedStyle.Render(cursorRenderedRow)
 	renderedRows = append([]string{cursorRenderedRow}, renderedRows...)
 
 	heightFree := viewportHeight - cursorRenderedRowHeight
@@ -646,6 +661,8 @@ func (m *model) renderTable() string {
 	downIndex := cursor + 1
 	rowCount := 0 // Number of visible rows needed for paging
 
+	// Add rows above and below current cursor until all the free space in the ViewPort is failed (which gives you a calculated page size)
+	// Page size needs to be calculate if you have rows that render over 1 line. Best way to achieve word wrapping
 	for heightFree > 0 && (upIndex >= 0 || downIndex < len(m.filteredIndices)) {
 		if upIndex >= 0 {
 			rendered, height, ok := m.renderRowAt(upIndex)
