@@ -94,7 +94,7 @@ func initialModel(data [][]string) *model {
 		commentInput:   ca,
 		showOnlyMarked: false,
 		drawerPort:     viewport.New(0, 0),
-		drawerHeight:   8,
+		drawerHeight:   13,
 		drawerOpen:     false,
 	}
 }
@@ -132,7 +132,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *model) recomputeLayout(height int, width int) {
 	// Computes the layout based on whats being rendered
-	log.Println("recomputeLayout called..")
+	log.Printf("recomputeLayout called with height[%d] width[%d]\n", height, width)
 	height -= 5
 	width -= 6
 	if m.drawerOpen {
@@ -143,7 +143,7 @@ func (m *model) recomputeLayout(height int, width int) {
 		m.drawerPort.Height = 8
 		m.drawerPort.Width = width
 	}
-	log.Printf("Update Received of type Windows Size Message. ViewPort is [%d]", m.viewport.Height)
+	log.Printf("Update Received of type Windows Size Message. ViewPort was [%d] and is now getting set to height[%d] width [%d]/n", m.viewport.Height, height, width)
 	m.viewport.Height = height
 	m.viewport.Width = width
 }
@@ -277,8 +277,8 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		//m.commentInput.Focus()
 		//m.loadOrClearCommentBox()
 		m.drawerOpen = !m.drawerOpen
-		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
 		log.Printf("handleViewModeKey: Toggling Drawer (bottom view above the footer) now see to [%t]", m.drawerOpen)
+		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
 	case "down", "j":
 		log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]", m.cursor, len(m.rows), m.drawerOpen)
 		if m.cursor < len(m.rows)-1 {
@@ -517,12 +517,16 @@ func (m *model) View() string {
 	borderedViewPort := tableStyle.Render(m.viewport.View())
 
 	if m.drawerOpen {
-		drawerTitle := appstyle.Render("Comments")
+		drawerTitle := headerStyle.Render("Comments\n")
 		switch m.currentMode {
 		case modView:
 			log.Printf("View should render comment in viewport with Height [%d], Width [%d]", m.drawerPort.Height, m.drawerPort.Width)
+			//drawer := tableStyle.Render(
+			//drawerTitle + commentArea.Render(m.drawerPort.View()))
 			drawer := tableStyle.Render(
-				drawerTitle + "\n" + m.drawerPort.View())
+				drawerTitle + "\n" + m.commentInput.View())
+			m.commentInput.Blur()
+			m.commentInput.SetCursor(0)
 			return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, m.headerView(), borderedViewPort, drawer, m.footerView()))
 		case modeComent:
 			drawer := tableStyle.Render(

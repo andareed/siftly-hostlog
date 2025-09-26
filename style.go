@@ -31,6 +31,11 @@ var (
 	defaultMarker = " " // defaultMarker is used to replace pillMarker when no RAG has been marked agaist a record
 	pillMarker    = "▐"
 	commentMarker = "[*]"
+
+	commentArea = lipgloss.NewStyle().
+			Border(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("245")). // subtle gray
+			Padding(0, 0).BorderLeft(true)
 )
 
 // func (r *renderedRow) Height() int {
