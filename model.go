@@ -372,9 +372,34 @@ func (m *model) refreshDrawerContent() {
 }
 
 func (m *model) currentRowHashID() uint64 {
+	if len(m.filteredIndices) == 0 || m.cursor < 0 || m.cursor >= len(m.filteredIndices) {
+		log.Printf("currentRowHashID called but no filteredIndices available (cursor=%d, len=%d)", m.cursor, len(m.filteredIndices))
+		return 0 // or some sentinel value
+	}
 	rowIdx := m.filteredIndices[m.cursor]
 	hashId := m.rows[rowIdx].id
+	log.Printf("currentRowHashID called returning HashID[%d] for cursor[%d] at filteredIndex[%d] which maps to rowIndex[%d]", hashId, m.cursor, rowIdx, rowIdx)
 	return hashId
+}
+
+func (m *model) jumpToHashID(hashId uint64) {
+	if hashId == 0 {
+		log.Printf("jumpToHashID called with HashID of 0, so returning")
+		m.cursor = 0
+		return
+	}
+
+	log.Printf("jumpToHashID called looking for HashID[%d]", hashId)
+	for i, idx := range m.filteredIndices {
+		log.Printf("jumpToHashID: Checking index[%d] with HashID[%d] against target HashID[%d]", idx, m.rows[idx].id, hashId)
+		if m.rows[idx].id == hashId {
+			m.cursor = i
+			log.Printf("jumpToHashID: Jumping to index [%d] for hashID[%d]", i, hashId)
+			return
+		}
+	}
+	m.cursor = 0
+	log.Printf("jumpToHashID: No match found for hashID[%d] so setting cursor to 0", hashId)
 }
 
 func (m *model) jumpToNextMark() {
@@ -476,6 +501,9 @@ func (m *model) includeRow(row renderedRow) bool {
 
 func (m *model) applyFilter() {
 	log.Printf("applyFilter called")
+	// Remember the Hash of what we have current selected
+
+	currentRowHash := m.currentRowHashID()    // should be called before we reset the filteredIndices
 	m.filteredIndices = m.filteredIndices[:0] // reset slice
 
 	if m.filterRegex == nil && !m.showOnlyMarked {
@@ -487,21 +515,27 @@ func (m *model) applyFilter() {
 		if len(m.filteredIndices) == 0 {
 			m.cursor = 0
 		}
+		m.jumpToHashID(currentRowHash)
+
 		m.viewport.SetContent(m.renderTable())
 		return
 	}
 
 	for i, row := range m.rows {
-		log.Printf("applyFilter: filter applied checking row[%s] against pattern[%s] \n", row.String(), m.filterRegex)
+		log.Printf("applyFilter: Checking row index[%d] with HashID[%d]\n", i, row.id)
+		log.Printf("applyFilter: Row content is [%s] and Filter regex is [%v]", row.String(), m.filterRegex)
 		if m.includeRow(row) {
 			log.Printf("Row included - %d index added to filteredIndices", i)
 			m.filteredIndices = append(m.filteredIndices, i)
 		}
 	}
+
 	if len(m.filteredIndices) == 0 {
 		// No matches found prevent index panics
 		m.cursor = -1
 	}
+
+	m.jumpToHashID(currentRowHash)
 	// Load content back into the viewport now its been filtered?
 	m.viewport.SetContent(m.renderTable())
 }
@@ -534,6 +568,8 @@ func (m *model) footerView() string {
 		//sb.WriteString(m.drawerPort.View())
 		//sb.WriteString(inputStyle.Render(m.commentInput.View()))
 	}
+	// Append formatted values
+	fmt.Fprintf(&sb, " Cursor is at [%d]", m.cursor)
 
 	return sb.String()
 }
