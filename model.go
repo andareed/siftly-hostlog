@@ -309,7 +309,8 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		log.Printf("handleViewModeKey: Toggling Drawer (bottom view above the footer) now see to [%t]", m.drawerOpen)
 		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
 	case "down", "j":
-		log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]", m.cursor, len(m.rows), m.drawerOpen)
+		log.Println("handleViewModeKey: Test")
+		log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]\n", m.cursor, len(m.rows), m.drawerOpen)
 		if m.cursor < len(m.rows)-1 {
 			m.cursor++
 		}
@@ -398,6 +399,7 @@ func (m *model) jumpToHashID(hashId uint64) {
 			return
 		}
 	}
+
 	m.cursor = 0
 	log.Printf("jumpToHashID: No match found for hashID[%d] so setting cursor to 0", hashId)
 }

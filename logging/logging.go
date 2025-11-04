@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"io"
 	"log"
 	"os"
 
@@ -12,7 +13,8 @@ import (
 // If filename is set, logs go to that file and Bubble Tea logs are enabled too.
 func SetupLogging(filename string) (cleanup func(), err error) {
 	if filename == "" {
-		// no logging
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
+		log.SetOutput(io.Discard) // <- key change
 		return func() {}, nil
 	}
 
