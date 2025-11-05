@@ -5,6 +5,7 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"github.com/charmbracelet/bubbles/textarea"
@@ -48,6 +49,9 @@ type model struct {
 	terminalHeight      int
 	terminalWidth       int
 	pageRowSize         int
+	noticeMsg           string
+	noticeType          string
+	noticeSeq           int
 }
 
 func (m *model) InitialiseUI() {
@@ -132,13 +136,6 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		return m.updateKey(msg)
 	case tea.WindowSizeMsg:
-
-		// Set Drawer Width to match the above to keep them in line
-		// Height gets set when C is pressed so should not needed.
-		//m.drawerPort.Width = msg.Width - 6
-		//if m.drawerOpen {
-		//m.viewport.Height = msg.Height - 5 - m.drawerHeight
-		//}
 		m.terminalHeight = msg.Height
 		m.terminalWidth = msg.Width
 		m.viewport = viewport.New(0, 0) // TODO: PRetty sure this is redundant
@@ -147,6 +144,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewport.SetContent(m.renderTable())
 
 		return m, nil
+	case clearNoticeMsg:
+		if msg.id == m.noticeSeq {
+			m.noticeMsg = ""
+			m.noticeType = ""
+		}
 	}
 
 	return m, nil
@@ -155,7 +157,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) recomputeLayout(height int, width int) {
 	// Computes the layout based on whats being rendered
 	log.Printf("recomputeLayout called with height[%d] width[%d]\n", height, width)
-	height -= 5
+	height -= 6 // TODO understand this better here? 2 is for the footer, header, plus borders probably
 	width -= 6
 	if m.drawerOpen {
 		height -= m.drawerHeight
@@ -198,6 +200,7 @@ func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.currentMode = modView
 			m.filterInput.Blur()
 			//m.applyFilter()
+			cmd = m.startNotice(fmt.Sprintf("Filter pattern set to {%s}", m.filterRegex.String()), "", 1500*time.Millisecond)
 		}
 		return m, cmd
 	default:
@@ -220,7 +223,7 @@ func (m *model) handleCommentKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.currentMode = modView
 			m.commentInput.Blur()
 			m.viewport.SetContent(m.renderTable())
-
+			cmd = m.startNotice(fmt.Sprintf("Comment {$s} made to row {%d}", m.commentInput.Value(), m.cursor+1), "", 1500*time.Millisecond)
 		}
 		return m, cmd
 	default:
@@ -247,6 +250,8 @@ func (m *model) MarkCurrent(colour MarkColor) {
 }
 
 func (m *model) handleMarkingModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	log.Println("handleMarkingModeKey called..")
 	//TODO: We can axe this switch now in favour or just using the enum
 	switch msg.String() {
 	case "r":
@@ -264,12 +269,14 @@ func (m *model) handleMarkingModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "esc":
 		m.currentMode = modView
 	}
+	cmd = m.startNotice(fmt.Sprintf("Row {%d} marked with colour {%s}", m.cursor+1, msg.String()), "", 1500*time.Millisecond)
 	m.viewport.SetContent(m.renderTable()) //TODO: Should the Setcontent and Renders be part of a proper update call. This is just ha hack (same as marking with a comment)
-	return m, nil
+	return m, cmd
 
 }
 
 func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 	switch msg.String() {
 	case "q":
 		return m, tea.Quit
@@ -280,6 +287,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		// Show Marks only
 		log.Println("Toggle for Show Marks Only has been pressed")
 		m.showOnlyMarked = !m.showOnlyMarked
+		cmd = m.startNotice(fmt.Sprintf("'Show Only Marked Rows' toggled {%b}", m.showOnlyMarked), "", 1500*time.Millisecond)
 		m.applyFilter()
 	case "n":
 		// Next mark jump
@@ -290,26 +298,27 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.jumpToPreviousMark()
 		m.ready = true
 	case "f":
+		// Set Filter
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
 		log.Println("Entering Mode: Filter (Focus Box)")
 	case "shift+f", "F":
+		// Clear Filter
 		log.Println("Shift F, clearing Filter")
 		m.setFilterPattern("") // Set the filter to nothing which will clear
+		cmd = m.startNotice("Cleared filter", "", 1500*time.Millisecond)
 	case "e":
+		// Comment (Edit) if the drawer is open (i.e. C has been pressed previously)
 		if m.drawerOpen {
 			m.commentInput.Focus()
 			m.currentMode = modeComent
 		}
 	case "c":
-		//m.currentMode = modeComent
-		//m.commentInput.Focus()
-		//m.loadOrClearCommentBox()
+		// Comment in Drawer to be toggled opened / closed
 		m.drawerOpen = !m.drawerOpen
 		log.Printf("handleViewModeKey: Toggling Drawer (bottom view above the footer) now see to [%t]", m.drawerOpen)
 		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
 	case "down", "j":
-		log.Println("handleViewModeKey: Test")
 		log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]\n", m.cursor, len(m.rows), m.drawerOpen)
 		if m.cursor < len(m.rows)-1 {
 			m.cursor++
@@ -328,6 +337,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "right", "l":
 		m.viewport.ScrollRight(4)
 	case "w":
+		cmd = m.startNotice("Saving file", "", 1500*time.Millisecond)
 		log.Printf("handleViewModeKey: key_press[w] calling SaveMeta with filename")
 		if err := SaveModel(m, "snapshot.json"); err != nil { /* handle */
 		}
@@ -338,7 +348,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	if m.ready {
 		m.viewport.SetContent((m.renderTable()))
 	}
-	return m, nil
+	return m, cmd
 }
 
 func (m *model) pageDown() {
@@ -550,18 +560,106 @@ func (m *model) headerView() string {
 	return headerStyle.Render(strings.Repeat(" ", markerWidth) + m.header.Render(cellStyle, m.viewport.Width-4, columnWeights))
 }
 
+func (m *model) statusView() string {
+	filterApplied := false
+	if m.filterRegex != nil {
+		filterApplied = true
+	}
+	left := fmt.Sprintf("%s • [FILTER: %t] • [MARKS ONLY:%t]", "hostlog.csv", filterApplied, m.showOnlyMarked)
+	rowsShown, rowsTotal := m.cursor+1, len(m.rows)
+	center := fmt.Sprintf("Rows %d/%d", rowsShown, rowsTotal)
+	right := "? help • f filter • c comment"
+
+	// Base bar style
+	bar := lipgloss.NewStyle().
+		Padding(0, 1).
+		Foreground(lipgloss.Color("252")).
+		Background(lipgloss.Color("238"))
+
+	// Use the bar as the base for every chunk so the background is consistent
+	chunk := func() lipgloss.Style { return bar.Copy().Padding(0) }
+
+	// Separator inherits background from bar, only changes the fg
+	sep := chunk().Foreground(lipgloss.Color("240")).Render("│")
+
+	total := m.viewport.Width
+	if total <= 0 {
+		total = 80
+	}
+
+	// Compute inner width = total minus bar frame (padding/border)
+	hpad, _ := bar.GetFrameSize()
+	inner := total - hpad
+	if inner < 0 {
+		inner = 0
+	}
+
+	sepW := lipgloss.Width(sep) // usually 1
+	avail := inner - (2 * sepW)
+	if avail < 0 {
+		avail = 0
+	}
+
+	lw := int(float64(avail) * 0.40)
+	cw := int(float64(avail) * 0.30)
+	rw := avail - lw - cw
+
+	L := chunk().Width(lw).Render(left)
+	C := chunk().Width(cw).Align(lipgloss.Center).Render(center)
+	R := chunk().Width(rw).Align(lipgloss.Right).Render(right)
+
+	line := lipgloss.JoinHorizontal(lipgloss.Top, L, sep, C, sep, R)
+	return bar.Width(total).Render(line)
+}
+
+func (m *model) noticeView(msg string, kind string) string {
+	if msg == "" {
+		return "" // nothing to show
+	}
+
+	total := m.viewport.Width
+	if total <= 0 {
+		total = 80
+	}
+
+	// pick an icon & background color based on kind
+	var icon, bg string
+	switch kind {
+	case "info":
+		icon, bg = "ℹ", "24" // blue
+	case "success":
+		icon, bg = "✓", "22" // green
+	case "warn":
+		icon, bg = "!", "130" // orange
+	case "error":
+		icon, bg = "×", "160" // red
+	default:
+		icon, bg = "", "238" // neutral gray
+	}
+
+	// build the line
+	text := msg
+	if icon != "" {
+		text = fmt.Sprintf("%s %s", icon, msg)
+	}
+
+	// style and pad to width
+	st := lipgloss.NewStyle().
+		Background(lipgloss.Color(bg)).
+		Foreground(lipgloss.Color("0")). // black text
+		Padding(0, 1)
+
+	// truncate if needed to fit terminal width
+	return st.Width(total).Render(text)
+}
+
 func (m *model) footerView() string {
+	// Deprecating for statusView
 	var sb strings.Builder
 
 	switch m.currentMode {
-	case modView:
-		if m.drawerOpen {
-			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark (u/PgUp) Page Up (d/PgDwn) (c)comment (e)edit-comment (x)export  (w)write")
-		} else {
-			sb.WriteString("(q)uit  (↑/↓ j/k)nav  (f)filter (F)clear-filter  (m)mark  (M)marks-only  (n/N)next/prev-mark (u/PgUp) Page Up (d/PgDwn) Page Down (c)comment  (x)export  (w)write")
-		}
 	case modeMarking:
-		sb.WriteString("Choose a color: (r)ed (g)reen (a)mber (c)lear | esc:cancel")
+		sb.WriteString(m.noticeView("Choose a color: (r)ed (g)reen (a)mber (c)lear | esc:cancel", ""))
 	case modeFilter:
 		sb.WriteString(inputStyle.Render(m.filterInput.View()))
 	case modeComent:
@@ -569,10 +667,11 @@ func (m *model) footerView() string {
 		//TODO:Not sure if i need this for drawerPort yet?
 		//sb.WriteString(m.drawerPort.View())
 		//sb.WriteString(inputStyle.Render(m.commentInput.View()))
+	default:
+		sb.WriteString(m.noticeView(m.noticeMsg, m.noticeType))
 	}
-	// Append formatted values
-	fmt.Fprintf(&sb, " Cursor is at [%d]", m.cursor)
-
+	sb.WriteString("\n")
+	sb.WriteString(m.statusView())
 	return sb.String()
 }
 

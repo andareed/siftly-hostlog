@@ -4216,16 +4216,6 @@
       "originalIndex": 300
     }
   ],
-  "marked": {
-    "12573820633657449528": "red",
-    "16712288752297219305": "green",
-    "16903071626031222667": "amber",
-    "1702433418368373046": "green",
-    "3993032840425406809": "green"
-  },
-  "comments": {
-    "12573820633657449528": "This my comment and it should be amazing",
-    "16903071626031222667": "Vendor and model",
-    "1702433418368373046": "this is another comment and it should be amazing"
-  }
+  "marked": {},
+  "comments": {}
 }
