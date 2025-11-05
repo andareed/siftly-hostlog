@@ -75,56 +75,6 @@ func (m *model) InitialiseUI() {
 	m.drawerOpen = false
 }
 
-// func initialModel(data [][]string) *model {
-// 	// Is passed the CSV as an array of strings and initialises the model as a set of rows.
-// 	rows := make([]renderedRow, 0, len(data))
-// 	header := renderedRow{
-// 		// TODO: How to add additional columns cleanly
-// 		// cols:   append([]string{"Comment"}, data[0]...),
-// 		cols:          data[0],
-// 		height:        1,
-// 		originalIndex: 0,
-// 	}
-
-// 	for i, csvRow := range data[1:] {
-// 		//TODO: Move this to a construct NewRenderedRow in the row.go file
-// 		row := renderedRow{
-// 			cols:   csvRow, // store columns directly
-// 			height: 1,      // assume 1 for now; adjust if multiline logic added later
-// 		}
-// 		row.id = row.ComputeID() // Should be always called therefore should be in the constructor
-// 		row.originalIndex = i + 1
-// 		rows = append(rows, row)
-
-// 	}
-
-// 	fi := textinput.New()
-// 	fi.Placeholder = "Regex Filter..."
-// 	fi.Focus()
-// 	fi.CharLimit = 156
-// 	fi.Width = 50
-
-// 	ca := textarea.New()
-// 	ca.Placeholder = "Comment:"
-// 	ca.Focus()
-// 	ca.CharLimit = 256
-// 	//ca.Width = 150
-
-// 	return &model{
-// 		header:         header,
-// 		rows:           rows,
-// 		currentMode:    modView,
-// 		markedRows:     make(map[uint64]MarkColor),
-// 		commentRows:    make(map[uint64]string),
-// 		filterInput:    fi,
-// 		commentInput:   ca,
-// 		showOnlyMarked: false,
-// 		drawerPort:     viewport.New(0, 0),
-// 		drawerHeight:   13,
-// 		drawerOpen:     false,
-// 	}
-// }
-
 func (m *model) Init() tea.Cmd {
 	m.applyFilter()
 	log.Println("siftly-hostlog: Initialised")
@@ -467,8 +417,15 @@ func (m *model) CommentCurrent(comment string) {
 	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
 		return
 	}
+
 	idx := m.filteredIndices[m.cursor]
 	hashId := m.rows[idx].id
+	if comment == "" {
+		delete(m.commentRows, hashId)
+		log.Printf("Clear comment Index[%d] on HashID[%d]\n", idx, hashId)
+		return
+		//TODO: Probably need this sending a notificatoin
+	}
 	m.commentRows[hashId] = comment
 	log.Printf("Setting Comment[%s] to Index[%d] on HashID[%d]\n", comment, idx, hashId)
 }
