@@ -3,17 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 	"unicode/utf8"
 
+	"github.com/andareed/siftly-hostlog/dialogs"
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
+
+//var _ tea.Msg = dialogs.SaveRequestedMsg{}
 
 type mode int
 
@@ -52,6 +56,9 @@ type model struct {
 	noticeMsg           string
 	noticeType          string
 	noticeSeq           int
+	activeDialog        dialogs.Dialog
+	fileName            string // filename the data will be saved to
+	InitialPath         string
 }
 
 func (m *model) InitialiseUI() {
@@ -82,7 +89,29 @@ func (m *model) Init() tea.Cmd {
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// Might be messy but all tick related messages need to be handle first and discard if necessary
+	switch fmt.Sprintf("%T", msg) {
+	case "cursor.BlinkMsg", "cursor.BlinkCanceledMsg":
+		return m, nil // Swallow the sound of the constant Blink Msgs
+	}
+	log.Printf("model:Update called with msg: %#T: %#v\n", msg, msg)
+
+	if m.activeDialog != nil && m.activeDialog.IsVisible() {
+		switch msg.(type) {
+		case tea.KeyMsg: //May need to WindowSizeMsg etc.. at a later date
+			log.Printf("model:Update:: Dialog box is active forward update to it")
+			var cmd tea.Cmd
+			m.activeDialog, cmd = m.activeDialog.Update(msg)
+			return m, cmd
+		}
+	}
 	switch msg := msg.(type) {
+	case clearNoticeMsg:
+		if msg.id == m.noticeSeq {
+			m.noticeMsg = ""
+			m.noticeType = ""
+		}
+		return m, nil
 	case tea.KeyMsg:
 		return m.updateKey(msg)
 	case tea.WindowSizeMsg:
@@ -92,13 +121,24 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
 		m.ready = true
 		m.viewport.SetContent(m.renderTable())
-
 		return m, nil
-	case clearNoticeMsg:
-		if msg.id == m.noticeSeq {
-			m.noticeMsg = ""
-			m.noticeType = ""
+	case dialogs.SaveRequestedMsg:
+		log.Printf("Update was called with msg SaveRequestedMsg (should pop a dialog box)")
+		m.activeDialog = dialogs.NewSaveDialog(defaultSaveName(*m), filepath.Dir(m.fileName))
+		m.activeDialog.Show()
+	case dialogs.SaveConfirmedMsg:
+		log.Printf("model:Update::Received SaveConfirmedMsg saving to the current file using path %q\n", msg.Path)
+		m.activeDialog.Hide()
+		if err := SaveModel(m, msg.Path); err != nil {
+			cmd := m.startNotice("Error", "", 1500*time.Millisecond)
+			return m, cmd
 		}
+		cmd := m.startNotice("Saved succeeded", "", 1500*time.Millisecond)
+		m.fileName = msg.Path
+		return m, cmd
+	case dialogs.SaveCanceledMsg:
+		log.Printf("model:Update::Received SaveCanceledMsg from dialog and hiding the active dialog\n")
+		m.activeDialog.Hide()
 	}
 
 	return m, nil
@@ -123,6 +163,10 @@ func (m *model) recomputeLayout(height int, width int) {
 }
 
 func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	if m.activeDialog != nil && m.activeDialog.IsVisible() {
+
+		return m.handleDialogKey(msg)
+	}
 	switch m.currentMode {
 	case modView:
 		return m.handleViewModeKey(msg)
@@ -135,6 +179,15 @@ func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+func (m *model) handleDialogKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	switch msg.String() {
+	case "enter", "esc":
+		log.Printf("handleDialogKey: Enter or esc presssed on dialog")
+	}
+	return m, cmd
 }
 
 func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -287,11 +340,7 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "right", "l":
 		m.viewport.ScrollRight(4)
 	case "w":
-		cmd = m.startNotice("Saving file", "", 1500*time.Millisecond)
-		log.Printf("handleViewModeKey: key_press[w] calling SaveMeta with filename")
-		if err := SaveModel(m, "snapshot.json"); err != nil { /* handle */
-		}
-
+		return m, func() tea.Msg { return dialogs.SaveRequestedMsg{} }
 	}
 
 	//TODO: DON'T THINK WE SHOULD BE RENDERING TABLE EVERY TIME TBH
@@ -522,7 +571,7 @@ func (m *model) statusView() string {
 	if m.filterRegex != nil {
 		filterApplied = true
 	}
-	left := fmt.Sprintf("%s • [FILTER: %t] • [MARKS ONLY:%t]", "hostlog.csv", filterApplied, m.showOnlyMarked)
+	left := fmt.Sprintf("%s • [FILTER: %t] • [MARKS ONLY:%t]", defaultSaveName(*m), filterApplied, m.showOnlyMarked)
 	rowsShown, rowsTotal := m.cursor+1, len(m.rows)
 	center := fmt.Sprintf("Rows %d/%d", rowsShown, rowsTotal)
 	right := "? help • f filter • c comment"
@@ -636,28 +685,49 @@ func (m *model) View() string {
 	if !m.ready {
 		return "loading..."
 	}
-	borderedViewPort := tableStyle.Render(m.viewport.View())
 
+	// 1) Build your base content (with or without drawer)
+	bordered := tableStyle.Render(m.viewport.View())
+
+	var main string
 	if m.drawerOpen {
 		drawerTitle := headerStyle.Render("Comments\n")
 		switch m.currentMode {
 		case modView:
-			log.Printf("View should render comment in viewport with Height [%d], Width [%d]", m.drawerPort.Height, m.drawerPort.Width)
-			//drawer := tableStyle.Render(
-			//drawerTitle + commentArea.Render(m.drawerPort.View()))
-			drawer := tableStyle.Render(
-				drawerTitle + "\n" + m.commentInput.View())
-			m.commentInput.Blur()
-			m.commentInput.SetCursor(0)
-			return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, m.headerView(), borderedViewPort, drawer, m.footerView()))
+			// no side effects here (no Blur/SetCursor)
+			drawer := tableStyle.Render(drawerTitle + "\n" + m.commentInput.View())
+			main = appstyle.Render(lipgloss.JoinVertical(
+				lipgloss.Left, m.headerView(), bordered, drawer, m.footerView(),
+			))
 		case modeComent:
-			drawer := tableStyle.Render(
-				drawerTitle + "\n" + m.commentInput.View())
-			return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, m.headerView(), borderedViewPort, drawer, m.footerView()))
+			drawer := tableStyle.Render(drawerTitle + "\n" + m.commentInput.View())
+			main = appstyle.Render(lipgloss.JoinVertical(
+				lipgloss.Left, m.headerView(), bordered, drawer, m.footerView(),
+			))
 		}
+	} else {
+		main = appstyle.Render(lipgloss.JoinVertical(
+			lipgloss.Left, m.headerView(), bordered, m.footerView(),
+		))
 	}
-	return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, m.headerView(), borderedViewPort, m.footerView()))
-	// return m.viewport.View() + "\n(↑/↓ to scroll, q to quit)"
+
+	// 2) If a dialog is showing, draw the overlay + dialog instead
+	// (simple/robust approach; replaces base while modal is active)
+	if m.activeDialog != nil && m.activeDialog.IsVisible() {
+		// Prefer real dimensions you track (e.g., from WindowSizeMsg)
+		w, h := m.viewport.Width, m.viewport.Height
+		return lipgloss.Place(
+			w, h, // from WindowSizeMsg
+			lipgloss.Center, lipgloss.Center,
+			m.activeDialog.View(), // modal box only (no centering here)
+			lipgloss.WithWhitespaceChars(" "),
+			lipgloss.WithWhitespaceBackground(lipgloss.Color("236")), // solid black backdrop
+		)
+
+	}
+
+	// 3) Otherwise, return the normal UI
+	return main
 }
 
 func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
@@ -722,7 +792,31 @@ func (m *model) getRowMarker(index uint64) string {
 	}
 }
 
+func defaultSaveName(m model) string {
+	// Case 1: we already have a current filename — use it
+	if m.fileName != "" {
+		return m.fileName
+	}
+
+	// Case 2: otherwise fall back to whatever initial path we have
+	initial := m.InitialPath
+	if initial == "" {
+		return "output.json" // final fallback
+	}
+
+	// Case 3: if the initial path already ends with .json, use it
+	if strings.HasSuffix(strings.ToLower(initial), ".json") {
+		return initial
+	}
+
+	// Case 4: replace any existing extension with .json
+	base := strings.TrimSuffix(initial, filepath.Ext(initial))
+	return base + ".json"
+}
+
 func (m *model) renderTable() string {
+	// TODO: refactor renderTable into view file, and the calculation into a windowAroundCursorFunction in ops
+
 	log.Println("renderTable called")
 	viewportHeight := m.viewport.Height
 	viewPortWidth := m.viewport.Width

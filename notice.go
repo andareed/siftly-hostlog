@@ -18,5 +18,6 @@ func (m *model) startNotice(msg, msgType string, d time.Duration) tea.Cmd {
 	id := m.noticeSeq
 
 	// schedule a clear for this specific notice id
+	return nil
 	return tea.Tick(d, func(time.Time) tea.Msg { return clearNoticeMsg{id: id} })
 }

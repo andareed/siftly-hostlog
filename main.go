@@ -63,6 +63,7 @@ func newModelFromJSONFile(path string) (*model, error) {
 	if err := LoadModel(m, path); err != nil {
 		return nil, err
 	}
+	m.InitialPath = path
 	m.InitialiseUI()
 	return m, nil
 }
@@ -85,6 +86,7 @@ func newModelFromCSVFile(path string) (*model, error) {
 	}
 
 	m := initialModelFromCSV(records)
+	m.InitialPath = path
 	m.InitialiseUI()
 	return m, nil
 }
