@@ -2,6 +2,7 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -106,8 +107,77 @@ func sanitizeMarkColor(s string) MarkColor {
 
 // --- Public API ---
 
+// ExportModel writes the *currently filtered* rows to a CSV file,
+// including mark color and comment as additional columns.
+func ExportModel(m *model, path string) error {
+	// Open file
+	f, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("open export file: %w", err)
+	}
+	defer f.Close()
+
+	w := csv.NewWriter(f)
+	defer w.Flush()
+
+	// Build header: original columns + Mark + Comment
+	header := append([]string(nil), m.header.cols...)
+	header = append(header, "Mark", "Comment")
+
+	if err := w.Write(header); err != nil {
+		return fmt.Errorf("write header: %w", err)
+	}
+
+	// Decide which indices to export:
+	// if filteredIndices is empty, fall back to all rows.
+	indices := m.filteredIndices
+	if len(indices) == 0 {
+		indices = make([]int, len(m.rows))
+		for i := range m.rows {
+			indices[i] = i
+		}
+	}
+
+	// Export each visible row
+	for _, idx := range indices {
+		// sanity check
+		if idx < 0 || idx >= len(m.rows) {
+			return fmt.Errorf("filtered index %d out of range", idx)
+		}
+		r := m.rows[idx]
+
+		// row data: original cols
+		out := append([]string(nil), r.cols...)
+
+		// append mark + comment using the row's id
+		mark := ""
+		if c, ok := m.markedRows[r.id]; ok {
+			mark = string(c)
+		}
+
+		comment := ""
+		if c, ok := m.commentRows[r.id]; ok {
+			comment = c
+		}
+
+		out = append(out, mark, comment)
+
+		if err := w.Write(out); err != nil {
+			return fmt.Errorf("write row %d: %w", idx, err)
+		}
+	}
+
+	w.Flush()
+	if err := w.Error(); err != nil {
+		return fmt.Errorf("flush csv: %w", err)
+	}
+
+	return nil
+}
+
 // SaveModel writes the entire model to a JSON file.
 func SaveModel(m *model, path string) error {
+	// TODO: Probably want to check the path for nulls and return error
 	dto := snapshotDTO{
 		Version:  snapshotVersion,
 		Header:   toDTORow(m.header),

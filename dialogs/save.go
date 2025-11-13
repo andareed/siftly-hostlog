@@ -120,7 +120,7 @@ func (d Save) View() string {
 
 	help := lipgloss.NewStyle().
 		Faint(true).
-		Render("enter to save • esc to cancel")
+		Render("enter to save (save.go) • esc to cancel")
 
 	content := fmt.Sprintf("%s\n\n%s", d.input.View(), help)
 	return box.Render(content)

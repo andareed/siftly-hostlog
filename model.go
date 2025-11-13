@@ -59,6 +59,7 @@ type model struct {
 	activeDialog        dialogs.Dialog
 	fileName            string // filename the data will be saved to
 	InitialPath         string
+	lastExportFileName  string
 }
 
 func (m *model) InitialiseUI() {
@@ -100,6 +101,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.(type) {
 		case tea.KeyMsg: //May need to WindowSizeMsg etc.. at a later date
 			log.Printf("model:Update:: Dialog box is active forward update to it")
+			// TODO Probably a good idea to write out a log with the type thats current active to save debug frustration
 			var cmd tea.Cmd
 			m.activeDialog, cmd = m.activeDialog.Update(msg)
 			return m, cmd
@@ -139,6 +141,25 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case dialogs.SaveCanceledMsg:
 		log.Printf("model:Update::Received SaveCanceledMsg from dialog and hiding the active dialog\n")
 		m.activeDialog.Hide()
+	case dialogs.ExportRequestedMsg:
+		log.Printf("Update wwas called with msg ExportRequestMsg (pop dialog for exports)")
+		m.activeDialog = dialogs.NewExportDialog(defaultExportName(*m), filepath.Dir(m.fileName)) // TODO: What filename should this default to for an export?
+		m.activeDialog.Show()
+	case dialogs.ExportConfirmedMsg:
+		// Screen Select should be exported as a csv
+		log.Printf("module:Update::ExportConfirmedMsg begin exporting to the file")
+		m.activeDialog.Hide()
+		// TODO: Insert call for exporting current selection to the csv
+		if err := ExportModel(m, msg.Path); err != nil {
+			cmd := m.startNotice("Export Error", "", 1500*time.Millisecond)
+			return m, cmd
+		}
+		cmd := m.startNotice("Exported succeeded", "", 1500*time.Millisecond)
+		m.lastExportFileName = msg.Path
+		return m, cmd
+	case dialogs.ExportCanceledMsg:
+		log.Printf("model:Update:: Received ExportCanceledMsg, close down the dialog")
+		m.activeDialog.Hide()
 	}
 
 	return m, nil
@@ -163,10 +184,10 @@ func (m *model) recomputeLayout(height int, width int) {
 }
 
 func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	if m.activeDialog != nil && m.activeDialog.IsVisible() {
-
-		return m.handleDialogKey(msg)
-	}
+	// if m.activeDialog != nil && m.activeDialog.IsVisible() {
+	//
+	// return m.handleDialogKey(msg)
+	// }
 	switch m.currentMode {
 	case modView:
 		return m.handleViewModeKey(msg)
@@ -181,14 +202,14 @@ func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m *model) handleDialogKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	switch msg.String() {
-	case "enter", "esc":
-		log.Printf("handleDialogKey: Enter or esc presssed on dialog")
-	}
-	return m, cmd
-}
+// func (m *model) handleDialogKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+// var cmd tea.Cmd
+// switch msg.String() {
+// case "enter", "esc":
+// log.Printf("handleDialogKey: Enter or esc presssed on dialog")
+// }
+// return m, cmd
+//  }
 
 func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
@@ -341,6 +362,8 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.viewport.ScrollRight(4)
 	case "w":
 		return m, func() tea.Msg { return dialogs.SaveRequestedMsg{} }
+	case "x":
+		return m, func() tea.Msg { return dialogs.ExportRequestedMsg{} }
 	}
 
 	//TODO: DON'T THINK WE SHOULD BE RENDERING TABLE EVERY TIME TBH
@@ -790,6 +813,16 @@ func (m *model) getRowMarker(index uint64) string {
 	default:
 		return defaultMarker
 	}
+}
+
+func defaultExportName(m model) string {
+	if m.lastExportFileName != "" {
+		return m.lastExportFileName
+	}
+
+	base := strings.TrimSuffix(m.InitialPath, filepath.Ext(m.InitialPath))
+	return "export-" + base + ".csv"
+
 }
 
 func defaultSaveName(m model) string {
