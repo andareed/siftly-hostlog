@@ -10,6 +10,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/andareed/siftly-hostlog/dialogs"
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
@@ -124,6 +125,10 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.ready = true
 		m.viewport.SetContent(m.renderTable())
 		return m, nil
+	case dialogs.HelpRequestedMsg:
+		log.Printf("Updated was called with msg HelpRequestedMsg (should pop a help dialog box)")
+		m.activeDialog = dialogs.NewHelpDialog(Keys.Legend())
+		m.activeDialog.Show()
 	case dialogs.SaveRequestedMsg:
 		log.Printf("Update was called with msg SaveRequestedMsg (should pop a dialog box)")
 		m.activeDialog = dialogs.NewSaveDialog(defaultSaveName(*m), filepath.Dir(m.fileName))
@@ -301,68 +306,70 @@ func (m *model) handleMarkingModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
-	switch msg.String() {
-	case "q":
+
+	switch {
+	case key.Matches(msg, Keys.Quit):
 		return m, tea.Quit
-	case "m":
+	case key.Matches(msg, Keys.MarkMode):
 		m.currentMode = modeMarking
 		log.Println("Entering Mode: Marking")
-	case "M":
+	case key.Matches(msg, Keys.ShowMarksOnly):
 		// Show Marks only
 		log.Println("Toggle for Show Marks Only has been pressed")
 		m.showOnlyMarked = !m.showOnlyMarked
 		cmd = m.startNotice(fmt.Sprintf("'Show Only Marked Rows' toggled {%b}", m.showOnlyMarked), "", 1500*time.Millisecond)
 		m.applyFilter()
-	case "n":
+	case key.Matches(msg, Keys.NextMark):
 		// Next mark jump
 		log.Println("Here we go; jumping to the next mark")
 		m.jumpToNextMark()
-	case "shift+n", "N":
+	case key.Matches(msg, Keys.PrevMark):
 		log.Println("Back once again: jumping to the previous mark")
 		m.jumpToPreviousMark()
 		m.ready = true
-	case "f":
+	case key.Matches(msg, Keys.Filter):
 		// Set Filter
 		m.currentMode = modeFilter
 		m.filterInput.Focus()
 		log.Println("Entering Mode: Filter (Focus Box)")
-	case "shift+f", "F":
+	case key.Matches(msg, Keys.ClearFilter):
 		// Clear Filter
 		log.Println("Shift F, clearing Filter")
 		m.setFilterPattern("") // Set the filter to nothing which will clear
 		cmd = m.startNotice("Cleared filter", "", 1500*time.Millisecond)
-	case "e":
+	case key.Matches(msg, Keys.EditComment):
 		// Comment (Edit) if the drawer is open (i.e. C has been pressed previously)
 		if m.drawerOpen {
 			m.commentInput.Focus()
 			m.currentMode = modeComent
 		}
-	case "c":
+	case key.Matches(msg, Keys.ShowComment):
 		// Comment in Drawer to be toggled opened / closed
 		m.drawerOpen = !m.drawerOpen
 		log.Printf("handleViewModeKey: Toggling Drawer (bottom view above the footer) now see to [%t]", m.drawerOpen)
 		m.recomputeLayout(m.terminalHeight, m.terminalWidth)
-	case "down", "j":
-		log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]\n", m.cursor, len(m.rows), m.drawerOpen)
+	case key.Matches(msg, Keys.RowDown):
+		// log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]\n", m.cursor, len(m.rows), m.drawerOpen)
 		if m.cursor < len(m.rows)-1 {
 			m.cursor++
 		}
-	case "up", "k":
+	case key.Matches(msg, Keys.RowUp):
 		if m.cursor > 0 {
 			m.cursor--
 		}
-	case "u", tea.KeyPgUp.String():
+	case key.Matches(msg, Keys.PageUp):
 		m.pageUp()
-	case "d", tea.KeyPgDown.String():
+	case key.Matches(msg, Keys.PageDown):
 		m.pageDown()
-
-	case "left", "h":
+	case key.Matches(msg, Keys.OpenHelp):
+		return m, func() tea.Msg { return dialogs.HelpRequestedMsg{} }
+	case key.Matches(msg, Keys.ScrollLeft):
 		m.viewport.ScrollLeft(4) // tune step
-	case "right", "l":
+	case key.Matches(msg, Keys.ScrollRight):
 		m.viewport.ScrollRight(4)
-	case "w":
+	case key.Matches(msg, Keys.SaveToFile):
 		return m, func() tea.Msg { return dialogs.SaveRequestedMsg{} }
-	case "x":
+	case key.Matches(msg, Keys.ExportToFile):
 		return m, func() tea.Msg { return dialogs.ExportRequestedMsg{} }
 	}
 
