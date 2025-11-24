@@ -23,6 +23,7 @@ type Keymap struct {
 	ScrollRight   key.Binding
 	SaveToFile    key.Binding
 	ExportToFile  key.Binding
+	CopyRow       key.Binding
 }
 
 var Keys = Keymap{
@@ -98,6 +99,10 @@ var Keys = Keymap{
 		key.WithKeys("e"),
 		key.WithHelp("e", "Export to filename"),
 	),
+	CopyRow: key.NewBinding(
+		key.WithKeys("ctrl+c"),
+		key.WithHelp("ctrl+c", "copy row to clipboard"),
+	),
 }
 
 func (k Keymap) Legend() []key.Binding {
@@ -113,5 +118,6 @@ func (k Keymap) Legend() []key.Binding {
 		k.ShowComment,
 		k.PageUp,
 		k.PageDown,
+		k.CopyRow,
 	}
 }

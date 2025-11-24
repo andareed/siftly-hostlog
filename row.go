@@ -35,14 +35,23 @@ func (r renderedRow) ComputeID() uint64 {
 	return h.Sum64()
 }
 
-func (r *renderedRow) String() string {
-	var rowAsString strings.Builder
+func (r *renderedRow) Join(sep string) string {
+	var b strings.Builder
 
-	for _, col := range r.cols {
-		rowAsString.WriteString(col)
-		rowAsString.WriteString("")
+	for i, col := range r.cols {
+		if i > 0 {
+			b.WriteString(sep)
+		}
+		b.WriteString(col)
 	}
-	return rowAsString.String()
+
+	return b.String()
+}
+
+// String implements fmt.Stringer – choose your default delimiter here.
+func (r *renderedRow) String() string {
+	// For regex + clipboard, a tab is usually a great default.
+	return r.Join("\t")
 }
 
 // func (r *renderedRow) Render() string {

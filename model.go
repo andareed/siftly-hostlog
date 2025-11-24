@@ -9,6 +9,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/andareed/siftly-hostlog/clipboard"
 	"github.com/andareed/siftly-hostlog/dialogs"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textarea"
@@ -310,6 +311,9 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch {
 	case key.Matches(msg, Keys.Quit):
 		return m, tea.Quit
+	case key.Matches(msg, Keys.CopyRow):
+		log.Println("Key Combination for CopyRow To Clipboard")
+		cmd = m.copyRowToClipboard()
 	case key.Matches(msg, Keys.MarkMode):
 		m.currentMode = modeMarking
 		log.Println("Entering Mode: Marking")
@@ -378,6 +382,19 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.viewport.SetContent((m.renderTable()))
 	}
 	return m, cmd
+}
+
+func (m *model) copyRowToClipboard() tea.Cmd {
+	if m.cursor >= 0 && m.cursor < len(m.rows) {
+		row := m.rows[m.cursor]
+		text := row.Join("\t") // Tab Delimetered string
+		if err := clipboard.Copy(text); err != nil {
+			return m.startNotice("Error with Clipboard occurred.", "", 1500*time.Millisecond)
+		} else {
+			return m.startNotice("Copied Row COntent to Clipboard", "", 1500*time.Millisecond)
+		}
+	}
+	return nil
 }
 
 func (m *model) pageDown() {
