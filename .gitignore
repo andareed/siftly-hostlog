@@ -8,6 +8,7 @@ debug.log
 
 # Example/test data
 hostlog.csv
+*.csv
 .coolnames.used
 *.json
 
