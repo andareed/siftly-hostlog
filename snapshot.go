@@ -1,4 +1,3 @@
-// snapshot.go
 package main
 
 import (
@@ -22,7 +21,7 @@ type renderedRowDTO struct {
 
 type snapshotDTO struct {
 	Version  int               `json:"version"`
-	Header   renderedRowDTO    `json:"header"`
+	Header   []ColumnMeta      `json:"header"`
 	Rows     []renderedRowDTO  `json:"rows"`
 	Marked   map[string]string `json:"marked"`   // MarkColor as string; uint64 keys stringified
 	Comments map[string]string `json:"comments"` // uint64 keys stringified
@@ -121,7 +120,10 @@ func ExportModel(m *model, path string) error {
 	defer w.Flush()
 
 	// Build header: original columns + Mark + Comment
-	header := append([]string(nil), m.header.cols...)
+	header := make([]string, 0, len(m.header)+2)
+	for _, col := range m.header {
+		header = append(header, col.Name)
+	}
 	header = append(header, "Mark", "Comment")
 
 	if err := w.Write(header); err != nil {
@@ -177,14 +179,21 @@ func ExportModel(m *model, path string) error {
 
 // SaveModel writes the entire model to a JSON file.
 func SaveModel(m *model, path string) error {
-	// TODO: Probably want to check the path for nulls and return error
 	dto := snapshotDTO{
 		Version:  snapshotVersion,
-		Header:   toDTORow(m.header),
+		Header:   nil, // filled below
 		Rows:     make([]renderedRowDTO, 0, len(m.rows)),
 		Marked:   u64KeyToStringMarkMap(m.markedRows),
 		Comments: u64KeyToStringStringMap(m.commentRows),
 	}
+
+	// Copy header metadata
+	if len(m.header) > 0 {
+		dto.Header = make([]ColumnMeta, len(m.header))
+		copy(dto.Header, m.header)
+	}
+
+	// Copy rows
 	for _, r := range m.rows {
 		dto.Rows = append(dto.Rows, toDTORow(r))
 	}
@@ -210,18 +219,28 @@ func LoadModel(m *model, path string) error {
 		return fmt.Errorf("snapshot version %d not supported (want %d)", dto.Version, snapshotVersion)
 	}
 
-	m.header = fromDTORow(dto.Header)
+	// Restore header
+	m.header = m.header[:0]
+	if len(dto.Header) > 0 {
+		m.header = make([]ColumnMeta, len(dto.Header))
+		copy(m.header, dto.Header)
+	}
 
+	// Restore rows
 	m.rows = m.rows[:0]
 	for _, dr := range dto.Rows {
 		m.rows = append(m.rows, fromDTORow(dr))
 	}
 
-	if m.markedRows, err = parseUintKeyMapMark(dto.Marked); err != nil {
-		return err
+	// Restore marks/comments
+	var errMarks, errComments error
+	m.markedRows, errMarks = parseUintKeyMapMark(dto.Marked)
+	if errMarks != nil {
+		return errMarks
 	}
-	if m.commentRows, err = parseUintKeyMapString(dto.Comments); err != nil {
-		return err
+	m.commentRows, errComments = parseUintKeyMapString(dto.Comments)
+	if errComments != nil {
+		return errComments
 	}
 
 	return nil

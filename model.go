@@ -35,7 +35,7 @@ const (
 //TODO Replace the name renderedRow, as these are not rendered anymore
 
 type model struct {
-	header              renderedRow // single row for column titles in headerview
+	header              []ColumnMeta // single row for column titles in headerview
 	rows                []renderedRow
 	viewport            viewport.Model
 	drawerPort          viewport.Model
@@ -149,7 +149,8 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.activeDialog.Hide()
 	case dialogs.ExportRequestedMsg:
 		log.Printf("Update wwas called with msg ExportRequestMsg (pop dialog for exports)")
-		m.activeDialog = dialogs.NewExportDialog(defaultExportName(*m), filepath.Dir(m.fileName)) // TODO: What filename should this default to for an export?
+		m.activeDialog = dialogs.NewExportDialog(defaultExportName(*m), filepath.Dir(m.fileName))
+		// TODO: What filename should this default to for an export?
 		m.activeDialog.Show()
 	case dialogs.ExportConfirmedMsg:
 		// Screen Select should be exported as a csv
@@ -184,9 +185,11 @@ func (m *model) recomputeLayout(height int, width int) {
 		m.drawerPort.Height = 8
 		m.drawerPort.Width = width
 	}
-	log.Printf("Update Received of type Windows Size Message. ViewPort was [%d] and is now getting set to height[%d] width [%d]/n", m.viewport.Height, height, width)
+	log.Printf("Update Received of type Windows Size Message."+
+		" ViewPort was [%d] and is now getting set to height[%d] width [%d]/n", m.viewport.Height, height, width)
 	m.viewport.Height = height
 	m.viewport.Width = width
+	m.header = layoutColumns(m.header, width)
 }
 
 func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -608,9 +611,27 @@ func (m *model) applyFilter() {
 // endregion
 
 func (m *model) headerView() string {
-	// Max width of RowNumbers, plus the size of the pillmarker,a nd comment marker
-	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) + utf8.RuneCountInString(pillMarker) + utf8.RuneCountInString(commentMarker) // +3 is the padding for whether a comment [*]
-	return headerStyle.Render(strings.Repeat(" ", markerWidth) + m.header.Render(cellStyle, m.viewport.Width-4, columnWeights))
+	// Width for row numbers + pill + comment markers
+	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) +
+		utf8.RuneCountInString(pillMarker) +
+		utf8.RuneCountInString(commentMarker)
+
+	var cells []string
+
+	for _, col := range m.header {
+		if !col.Visible || col.Width <= 0 {
+			continue
+		}
+
+		cell := cellStyle.Width(col.Width).Render(col.Name)
+		cells = append(cells, cell)
+	}
+
+	headerRow := lipgloss.JoinHorizontal(lipgloss.Top, cells...)
+
+	return headerStyle.Render(
+		strings.Repeat(" ", markerWidth) + headerRow,
+	)
 }
 
 func (m *model) statusView() string {
@@ -807,8 +828,9 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 		//firstLineMarker = standardMarker + rowBgStyle.Render("[*]")
 	}
 	//TODO Replace:4 with the width of marker, and comment
-	content := row.Render(cellStyle, m.viewport.Width-4, columnWeights) // Adjust for marker width
-
+	//content := row.Render(cellStyle, m.viewport.Width-4, columnWeights) // Adjust for marker width
+	//TODO: May need to think what to do with that 4
+	content := row.Render(cellStyle, m.header)
 	lines := strings.Split(content, "\n")
 
 	for i := range lines {

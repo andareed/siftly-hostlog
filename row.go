@@ -7,16 +7,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var columnWeights = []float64{
-	0.1,  // Time
-	0.15, // Host
-	0.4,  // Details
-	0.1,  // Appliance
-	0.15, // MAC
-	0.1,  // IPv6
-	0,
-}
-
 type renderedRow struct {
 	cols          []string
 	height        int
@@ -54,20 +44,25 @@ func (r *renderedRow) String() string {
 	return r.Join("\t")
 }
 
-// func (r *renderedRow) Render() string {
-// return lipgloss.JoinHorizontal(lipgloss.Top, r.cols...)
-// }
+func (r *renderedRow) Render(style lipgloss.Style, colsMeta []ColumnMeta) string {
+	var rendered []string
 
-func (r *renderedRow) Render(style lipgloss.Style, rowWidth int, columnWeights []float64) string {
-	rendered := make([]string, len(r.cols))
-	for i, col := range r.cols {
-		colWidth := int(float64(rowWidth) * columnWeights[i])
-		rendered[i] = style.Width(colWidth).Render(col)
+	for i, text := range r.cols {
+		if i >= len(colsMeta) {
+			break
+		}
+		meta := colsMeta[i]
+
+		if !meta.Visible || meta.Width <= 0 {
+			// Skip hidden / zero-width columns completely
+			continue
+		}
+
+		cell := style.Width(meta.Width).Render(text)
+		rendered = append(rendered, cell)
 	}
+
 	joined := lipgloss.JoinHorizontal(lipgloss.Top, rendered...)
-
-	r.height = lipgloss.Height(joined) // store it
-	// r.cached = joined                  // optionally cache it
-
+	r.height = lipgloss.Height(joined)
 	return joined
 }

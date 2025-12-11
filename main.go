@@ -93,25 +93,59 @@ func newModelFromCSVFile(path string) (*model, error) {
 
 // Builds rows from CSV
 func initialModelFromCSV(data [][]string) *model {
-	rows := make([]renderedRow, 0, len(data))
-	header := renderedRow{
-		cols:          data[0],
-		height:        1,
-		originalIndex: 0,
+
+	rawHeader := data[0]
+	cols := make([]ColumnMeta, len(rawHeader))
+	for i, name := range rawHeader {
+		role := detectRole(name)
+		cols[i] = ColumnMeta{
+			Name:     name,
+			Index:    i,
+			Role:     role,
+			Visible:  true,
+			MinWidth: defaultMinWidthForRole(role),
+			Weight:   defaultWeightForRole(role),
+		}
 	}
 
+	rows := make([]renderedRow, 0, len(data)-1)
+
+	hasData := make([]bool, len(cols)) // track which columns ever have content
+
 	for i, csvRow := range data[1:] {
+		// Track whether this row has data in each column
+		for colIdx := range cols {
+			if colIdx < len(csvRow) && strings.TrimSpace(csvRow[colIdx]) != "" {
+				hasData[colIdx] = true
+			}
+		}
+
+		// Build your row like normal
 		row := renderedRow{
 			cols:   csvRow,
 			height: 1,
 		}
 		row.id = row.ComputeID()
 		row.originalIndex = i + 1
+
 		rows = append(rows, row)
 	}
 
+	// After building rows: mark empty columns
+	for i := range cols {
+		if !hasData[i] {
+			// Entire column was empty → hide it (unless it's your primary/details column)
+			if cols[i].Role != RolePrimary {
+				log.Printf("No column data in none-Primary colum: %d so setting visibility to false \n", i)
+				cols[i].Visible = false
+			}
+			cols[i].Weight = 0
+			cols[i].Width = 0
+		}
+	}
+
 	return &model{
-		header:      header,
+		header:      cols,
 		rows:        rows,
 		currentMode: modView,
 
