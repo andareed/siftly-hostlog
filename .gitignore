@@ -16,3 +16,6 @@ run*.sh
 # IDE/editor settings
 .vscode/
 .idea/
+
+# build outputs
+dist/
