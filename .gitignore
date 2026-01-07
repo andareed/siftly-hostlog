@@ -11,6 +11,7 @@ hostlog.csv
 *.csv
 .coolnames.used
 *.json
+run*.sh
 
 # IDE/editor settings
 .vscode/

@@ -16,7 +16,17 @@ import (
 var logFile = flag.String("debug", "", "Write Debug Logs to file")
 
 func main() {
+	versionFlag := flag.Bool("version", false, "print version and exit")
+
 	flag.Parse()
+
+	// --- EARLY EXIT ---
+	if *versionFlag {
+		fmt.Println("Version:", Version)
+		os.Exit(0)
+	}
+
+	// Anything below here should NOT run if --version was provided.
 	cleanup, err := logging.SetupLogging(*logFile)
 	if err != nil {
 		log.Fatalf("Failed to setup logging %v", err)
@@ -30,6 +40,7 @@ func main() {
 		fmt.Println("Usage: sfhost [--debug debug.log] <file.csv|file.json>")
 		os.Exit(1)
 	}
+
 	inputPath := args[0]
 
 	m, err := loadModelAuto(inputPath)

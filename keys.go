@@ -29,27 +29,27 @@ type Keymap struct {
 var Keys = Keymap{
 	Quit: key.NewBinding(
 		key.WithKeys("q"),
-		key.WithHelp("q", "quit"),
+		key.WithHelp("q", "Quit"),
 	),
 	MarkMode: key.NewBinding(
 		key.WithKeys("m"),
-		key.WithHelp("m", "mark mode"),
+		key.WithHelp("m", "Mark mode"),
 	),
 	ShowMarksOnly: key.NewBinding(
 		key.WithKeys("M"),
-		key.WithHelp("M", "toggle show only marked"),
+		key.WithHelp("M", "Toggle show only marked"),
 	),
 	NextMark: key.NewBinding(
 		key.WithKeys("n"),
-		key.WithHelp("n", "next mark"),
+		key.WithHelp("n", "Jump to next mark"),
 	),
 	PrevMark: key.NewBinding(
 		key.WithKeys("N"),
-		key.WithHelp("N", "previous mark"),
+		key.WithHelp("N", "Jump to previous mark"),
 	),
 	ShowComment: key.NewBinding(
 		key.WithKeys("c"),
-		key.WithHelp("c", "Show Comments"),
+		key.WithHelp("c", "Show/Not Show Comments"),
 	),
 	EditComment: key.NewBinding(
 		key.WithKeys("e"),
@@ -57,11 +57,11 @@ var Keys = Keymap{
 	),
 	Filter: key.NewBinding(
 		key.WithKeys("f"),
-		key.WithHelp("f", "filter"),
+		key.WithHelp("f", "Filter by Regex"),
 	),
 	ClearFilter: key.NewBinding(
 		key.WithKeys("F"),
-		key.WithHelp("F", "clear filter"),
+		key.WithHelp("F", "Clear current filter"),
 	),
 	PageUp: key.NewBinding(
 		key.WithKeys("u", "pgup"),
@@ -69,19 +69,19 @@ var Keys = Keymap{
 	),
 	PageDown: key.NewBinding(
 		key.WithKeys("d", "pgdown"),
-		key.WithHelp("d/pgdown", "page down"),
+		key.WithHelp("d/pgdown", "Page down"),
 	),
 	RowDown: key.NewBinding(
 		key.WithKeys("j", "down"),
-		key.WithHelp("j/↓", "move down"),
+		key.WithHelp("j/↓", "Move a row down"),
 	),
 	RowUp: key.NewBinding(
 		key.WithKeys("k", "up"),
-		key.WithHelp("k/↑", "move up"),
+		key.WithHelp("k/↑", "Move a row up"),
 	),
 	OpenHelp: key.NewBinding(
 		key.WithKeys("?"),
-		key.WithHelp("?", "help / keys"),
+		key.WithHelp("?", "Help / keys"),
 	),
 	ScrollLeft: key.NewBinding(
 		key.WithKeys("h", "left"),
@@ -101,7 +101,7 @@ var Keys = Keymap{
 	),
 	CopyRow: key.NewBinding(
 		key.WithKeys("ctrl+c"),
-		key.WithHelp("ctrl+c", "copy row to clipboard"),
+		key.WithHelp("ctrl+c", "Copy row to clipboard"),
 	),
 }
 
@@ -119,5 +119,9 @@ func (k Keymap) Legend() []key.Binding {
 		k.PageUp,
 		k.PageDown,
 		k.CopyRow,
+		k.ExportToFile,
+		k.SaveToFile,
+		k.RowUp,
+		k.RowDown,
 	}
 }
