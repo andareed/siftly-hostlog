@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/andareed/siftly-hostlog/logging"
 )
 
 func (m *model) jumpToStart() {
-	log.Println("jumpToStart called...")
+	logging.Debug("jumpToStart called...")
 	if !m.checkViewPortHasData() {
 		return
 	}
@@ -16,7 +17,7 @@ func (m *model) jumpToStart() {
 }
 
 func (m *model) jumpToEnd() {
-	log.Println("jumpToEnd called...")
+	logging.Debug("jumpToEnd called...")
 	if !m.checkViewPortHasData() {
 		return
 	}
@@ -26,7 +27,7 @@ func (m *model) jumpToEnd() {
 }
 
 func (m *model) jumpToLine(lineNo int) tea.Cmd {
-	log.Println("jumpToLineNo")
+	logging.Debug("jumpToLineNo")
 	if !m.checkViewPortHasData() {
 		return nil
 	}

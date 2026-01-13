@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/andareed/siftly-hostlog/logging"
 )
 
-func (m *model) MarkCurrent(colour MarkColor) {
+func (m *model) markCurrent(colour MarkColor) {
 	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
 		return // This messed up as the cursor isn't at a point in the viewport
 	}
@@ -15,9 +16,9 @@ func (m *model) MarkCurrent(colour MarkColor) {
 	id := m.rows[master].id
 	if colour == MarkNone {
 		delete(m.markedRows, id)
-		log.Printf("Cursor: %d with Stable ID %d has been unmarked", m.cursor, id)
+		logging.Infof("Cursor: %d with Stable ID %d has been unmarked", m.cursor, id)
 	} else {
-		log.Printf("Cursor: %d with Stable ID %d is being marked with color %s", m.cursor, id, colour)
+		logging.Infof("Cursor: %d with Stable ID %d is being marked with color %s", m.cursor, id, colour)
 		m.markedRows[id] = colour
 	}
 }
@@ -25,7 +26,7 @@ func (m *model) MarkCurrent(colour MarkColor) {
 func (m *model) handleMarkCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	switch msg.String() {
 	case "esc":
-		m.currentMode = modeView
+		m.ui.mode = modeView
 		return m, nil
 
 	case "r", "g", "a", "c":
@@ -41,8 +42,8 @@ func (m *model) handleMarkCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			mark = MarkNone
 		}
 
-		m.MarkCurrent(mark)
-		m.currentMode = modeView
+		m.markCurrent(mark)
+		m.ui.mode = modeView
 
 		m.refreshView("mark", false)
 
@@ -59,7 +60,7 @@ func (m *model) handleMarkCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) jumpToNextMark() {
-	log.Println("jumpToNextMark callled..")
+	logging.Debug("jumpToNextMark callled..")
 	if !m.checkViewPortHasData() {
 		return
 	}
@@ -68,34 +69,34 @@ func (m *model) jumpToNextMark() {
 		rowIdx := m.filteredIndices[i]
 		row := m.rows[rowIdx]
 		if _, ok := m.markedRows[row.id]; ok {
-			log.Printf("Next mark found at %d \n", i)
+			logging.Debugf("Next mark found at %d", i)
 			m.cursor = i
 			return
 		}
 
 	}
-	log.Println("No next mark has been found")
+	logging.Debug("No next mark has been found")
 }
 
 func (m *model) jumpToPreviousMark() {
-	log.Println("jumpToPreviousMark called..")
+	logging.Debug("jumpToPreviousMark called..")
 	n := len(m.filteredIndices)
 	if n == 0 {
-		log.Println("filteredIndicies is emtpy")
+		logging.Debug("filteredIndicies is emtpy")
 	}
 	if m.cursor < 0 {
-		log.Println("Cursor at 0 or below")
+		logging.Debug("Cursor at 0 or below")
 	}
 
 	for i := m.cursor - 1; i >= 0; i-- {
 		rowIdx := m.filteredIndices[i]
 		row := m.rows[rowIdx]
 		if _, ok := m.markedRows[row.id]; ok {
-			log.Println("Previous mark has been found")
+			logging.Debug("Previous mark has been found")
 			m.cursor = i
 			return
 		}
 
 	}
-	log.Println("No previous mark has been found")
+	logging.Debug("No previous mark has been found")
 }

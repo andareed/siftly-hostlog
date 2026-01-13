@@ -20,7 +20,7 @@ type CommandInput struct {
 	buf string
 }
 
-func CommandFromPrefix(r rune) Command {
+func commandFromPrefix(r rune) Command {
 	switch r {
 	case ':':
 		return CmdJump
@@ -78,35 +78,35 @@ func (m *model) commandHintsLine(cmd Command) string {
 
 // activeCommandLine returns the command prompt text for the footer status line.
 func (m *model) activeCommandLine() string {
-	badge := m.commandBadge(m.ci.cmd)
-	prompt := m.commandPrompt(m.ci.cmd)
-	return badge + " " + prompt + m.ci.buf
+	badge := m.commandBadge(m.ui.command.cmd)
+	prompt := m.commandPrompt(m.ui.command.cmd)
+	return badge + " " + prompt + m.ui.command.buf
 }
 
 func (m *model) enterCommand(cmd Command, seed string, showHint bool, refresh bool) tea.Cmd {
-	m.ci.cmd = cmd
+	m.ui.command.cmd = cmd
 	if seed != "" {
-		m.ci.buf = seed
+		m.ui.command.buf = seed
 	} else {
 		switch cmd {
 		case CmdFilter:
 			if m.filterRegex != nil {
-				m.ci.buf = m.filterRegex.String()
+				m.ui.command.buf = m.filterRegex.String()
 			} else {
-				m.ci.buf = ""
+				m.ui.command.buf = ""
 			}
 		case CmdSearch:
 			if m.searchRegex != nil {
-				m.ci.buf = m.searchRegex.String()
+				m.ui.command.buf = m.searchRegex.String()
 			} else {
-				m.ci.buf = ""
+				m.ui.command.buf = ""
 			}
 		default:
-			m.ci.buf = ""
+			m.ui.command.buf = ""
 		}
 	}
 
-	m.currentMode = modeCommand
+	m.ui.mode = modeCommand
 	if refresh {
 		m.refreshView("enter-command", false)
 	}
@@ -117,8 +117,8 @@ func (m *model) enterCommand(cmd Command, seed string, showHint bool, refresh bo
 }
 
 func (m *model) exitCommand(refresh bool) tea.Cmd {
-	m.ci = CommandInput{}
-	m.currentMode = modeView
+	m.ui.command = CommandInput{}
+	m.ui.mode = modeView
 	if refresh {
 		m.refreshView("exit-command", false)
 	}

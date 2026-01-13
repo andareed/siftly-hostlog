@@ -2,9 +2,9 @@ package dialogs
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 
+	"github.com/andareed/siftly-hostlog/logging"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -72,17 +72,17 @@ func NewSaveDialog(defaultName, lastDir string) *Save {
 }
 
 func (d *Save) Update(msg tea.Msg) (Dialog, tea.Cmd) {
-	log.Printf("SaveDialog:Update:: Called\n")
+	logging.Debug("SaveDialog:Update:: Called")
 	if !d.visible {
 		return d, nil
 	}
 	switch m := msg.(type) {
 	case tea.KeyMsg:
-		log.Printf("Update::Handle Key Message\n")
+		logging.Debug("Update::Handle Key Message")
 		s := m.String()
 		switch s {
 		case "enter":
-			log.Printf("SaveDialog:Update::Enter key was pressed, starting saving to file.\n")
+			logging.Infof("SaveDialog:Update::Enter key was pressed, starting saving to file.")
 			val := d.input.Value()
 			if val == "" {
 				// fall back to placeholder if user left it blank
@@ -98,7 +98,7 @@ func (d *Save) Update(msg tea.Msg) (Dialog, tea.Cmd) {
 			}
 			return d, func() tea.Msg { return SaveConfirmedMsg{Path: path} }
 		case "esc":
-			log.Printf("SaveDialog:Update::Esc key was prssed, cancel anything to do with this\n")
+			logging.Debug("SaveDialog:Update::Esc key was prssed, cancel anything to do with this")
 			return d, func() tea.Msg { return SaveCanceledMsg{} }
 		}
 	}

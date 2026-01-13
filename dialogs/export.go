@@ -2,9 +2,9 @@ package dialogs
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 
+	"github.com/andareed/siftly-hostlog/logging"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -44,17 +44,17 @@ func NewExportDialog(defaultName, lastDir string) *Export {
 }
 
 func (d *Export) Update(msg tea.Msg) (Dialog, tea.Cmd) {
-	log.Printf("ExportDialog:Update:: Called\n")
+	logging.Debug("ExportDialog:Update:: Called")
 	if !d.visible {
 		return d, nil
 	}
 	switch m := msg.(type) {
 	case tea.KeyMsg:
-		log.Printf("Export:Update::Handle Key Message\n")
+		logging.Debug("Export:Update::Handle Key Message")
 		s := m.String()
 		switch s {
 		case "enter":
-			log.Printf("ExportDialog:Update::Enter key was pressed, starting exporting to file.\n")
+			logging.Infof("ExportDialog:Update::Enter key was pressed, starting exporting to file.")
 			val := d.input.Value()
 			if val == "" {
 				// fall back to placeholder if user left it blank
@@ -70,7 +70,7 @@ func (d *Export) Update(msg tea.Msg) (Dialog, tea.Cmd) {
 			}
 			return d, func() tea.Msg { return ExportConfirmedMsg{Path: path} }
 		case "esc":
-			log.Printf("ExportDialog:Update::Esc key was prssed, cancel anything to do with this\n")
+			logging.Debug("ExportDialog:Update::Esc key was prssed, cancel anything to do with this")
 			return d, func() tea.Msg { return ExportCanceledMsg{} }
 		}
 	}

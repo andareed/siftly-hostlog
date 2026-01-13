@@ -2,9 +2,9 @@ package dialogs
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
+	"github.com/andareed/siftly-hostlog/logging"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -36,7 +36,7 @@ func NewHelpDialog(bindings []key.Binding) *Help {
 }
 
 func (d *Help) Update(msg tea.Msg) (Dialog, tea.Cmd) {
-	log.Printf("HelpDialog:Update:: Called\n")
+	logging.Debug("HelpDialog:Update:: Called")
 
 	switch m := msg.(type) {
 	case tea.KeyMsg:

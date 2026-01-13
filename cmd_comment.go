@@ -1,11 +1,11 @@
 package main
 
 import (
-	"log"
+	"github.com/andareed/siftly-hostlog/logging"
 )
 
 func (m *model) addComment(comment string) {
-	log.Printf("CommentCurrent called..\n")
+	logging.Debug("CommentCurrent called..")
 	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
 		return
 	}
@@ -14,12 +14,12 @@ func (m *model) addComment(comment string) {
 	hashId := m.rows[idx].id
 	if comment == "" {
 		delete(m.commentRows, hashId)
-		log.Printf("Clear comment Index[%d] on HashID[%d]\n", idx, hashId)
+		logging.Infof("Clear comment Index[%d] on HashID[%d]", idx, hashId)
 		return
 		//TODO: Probably need this sending a notificatoin
 	}
 	m.commentRows[hashId] = comment
-	log.Printf("Setting Comment[%s] to Index[%d] on HashID[%d]\n", comment, idx, hashId)
+	logging.Infof("Setting Comment[%s] to Index[%d] on HashID[%d]", comment, idx, hashId)
 }
 
 func (m *model) getCommentContent(rowIdx uint64) string {
@@ -31,9 +31,9 @@ func (m *model) getCommentContent(rowIdx uint64) string {
 }
 
 func (m *model) refreshDrawerContent() {
-	log.Printf("refreshDrawerContent called..")
+	logging.Debug("refreshDrawerContent called..")
 	currentComment := m.getCommentContent(m.currentRowHashID())
-	log.Printf("Comment Input and Drawer Port being set to: %s", currentComment)
+	logging.Debugf("Comment Input and Drawer Port being set to: %s", currentComment)
 	m.commentInput.SetValue(currentComment)
 	m.drawerPort.SetContent(currentComment)
 }

@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,11 +28,11 @@ func main() {
 	// Anything below here should NOT run if --version was provided.
 	cleanup, err := logging.SetupLogging(*logFile)
 	if err != nil {
-		log.Fatalf("Failed to setup logging %v", err)
+		logging.Fatalf("Failed to setup logging %v", err)
 	}
 	defer cleanup()
 
-	log.Println("siftly-hostlog: Started")
+	logging.Info("siftly-hostlog: Started")
 
 	args := flag.Args()
 	if len(args) < 1 {
@@ -45,12 +44,12 @@ func main() {
 
 	m, err := loadModelAuto(inputPath)
 	if err != nil {
-		log.Fatalf("failed to load %q: %v", inputPath, err)
+		logging.Fatalf("failed to load %q: %v", inputPath, err)
 	}
 
 	_, err = tea.NewProgram(m, tea.WithAltScreen()).Run()
 	if err != nil {
-		log.Printf("Tea program error: %v", err)
+		logging.Errorf("Tea program error: %v", err)
 		fmt.Println("Error:", err)
 	}
 }
@@ -147,7 +146,7 @@ func initialModelFromCSV(data [][]string) *model {
 		if !hasData[i] {
 			// Entire column was empty → hide it (unless it's your primary/details column)
 			if cols[i].Role != RolePrimary {
-				log.Printf("No column data in none-Primary colum: %d so setting visibility to false \n", i)
+				logging.Warnf("No column data in none-Primary colum: %d so setting visibility to false", i)
 				cols[i].Visible = false
 			}
 			cols[i].Weight = 0
@@ -156,9 +155,9 @@ func initialModelFromCSV(data [][]string) *model {
 	}
 
 	return &model{
-		header:      cols,
-		rows:        rows,
-		currentMode: modeView,
+		header: cols,
+		rows:   rows,
+		ui:     uiState{mode: modeView},
 
 		markedRows:  make(map[uint64]MarkColor),
 		commentRows: make(map[uint64]string),

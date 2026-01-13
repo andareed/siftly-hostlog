@@ -7,23 +7,23 @@ import (
 )
 
 func (m *model) runCommand() tea.Cmd {
-	switch m.ci.cmd {
+	switch m.ui.command.cmd {
 	case CmdJump:
-		if n, err := strconv.Atoi(m.ci.buf); err == nil {
+		if n, err := strconv.Atoi(m.ui.command.buf); err == nil {
 			return m.jumpToLine(n)
 		}
 		return m.startNotice("Invalid line number", "warn", noticeDuration)
 
 	case CmdSearch:
-		m.searchOnce(m.ci.buf)
+		m.searchOnce(m.ui.command.buf)
 		return nil
 
 	case CmdFilter:
-		m.setFilterPattern(m.ci.buf)
+		m.setFilterPattern(m.ui.command.buf)
 		return nil
 
 	case CmdComment:
-		m.addComment(m.ci.buf)
+		m.addComment(m.ui.command.buf)
 		return m.startNotice("Comment added", "", noticeDuration)
 	}
 	return nil
@@ -37,7 +37,7 @@ func (m *model) handleCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 
 	// constrained command: mark
-	if m.ci.cmd == CmdMark {
+	if m.ui.command.cmd == CmdMark {
 		return m.handleMarkCommandKey(msg) // your tightened function
 	}
 
@@ -51,15 +51,15 @@ func (m *model) handleCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// editing
 	switch msg.Type {
 	case tea.KeyBackspace:
-		if len(m.ci.buf) > 0 {
-			m.ci.buf = m.ci.buf[:len(m.ci.buf)-1]
+		if len(m.ui.command.buf) > 0 {
+			m.ui.command.buf = m.ui.command.buf[:len(m.ui.command.buf)-1]
 		}
 		return m, nil
 	}
 
 	// append printable rune
 	if len(msg.Runes) == 1 {
-		m.ci.buf += string(msg.Runes[0])
+		m.ui.command.buf += string(msg.Runes[0])
 	}
 	return m, nil
 }

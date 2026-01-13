@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type FooterState struct {
+type footerState struct {
 	Mode      Command
 	ModeInput string
 
@@ -24,7 +24,7 @@ type FooterState struct {
 	Legend        string
 }
 
-type FooterStyles struct {
+type footerStyles struct {
 	BarBG      lipgloss.Color
 	StatusBG   lipgloss.Color
 	ModePillBG lipgloss.Color
@@ -36,8 +36,8 @@ type FooterStyles struct {
 	LegendFG   lipgloss.Color
 }
 
-func DefaultFooterStyles() FooterStyles {
-	return FooterStyles{
+func defaultFooterStyles() footerStyles {
+	return footerStyles{
 		BarBG:      lipgloss.Color("#2b2b2b"),
 		StatusBG:   lipgloss.Color("#000000"),
 		ModePillBG: lipgloss.Color("#ff9f1c"),
@@ -50,7 +50,7 @@ func DefaultFooterStyles() FooterStyles {
 	}
 }
 
-func RenderFooter(width int, st FooterState, styles FooterStyles) string {
+func renderFooter(width int, st footerState, styles footerStyles) string {
 	if width <= 0 {
 		return ""
 	}
@@ -72,7 +72,7 @@ func RenderFooter(width int, st FooterState, styles FooterStyles) string {
 	return line1 + "\n" + line2
 }
 
-func renderControlBar(width int, st FooterState, styles FooterStyles) string {
+func renderControlBar(width int, st footerState, styles footerStyles) string {
 	gapW := 1
 	filterValW := 12
 	marksW := 5
@@ -135,7 +135,7 @@ func renderControlBar(width int, st FooterState, styles FooterStyles) string {
 	return applyBar(linePlain, styles.BarBG, styles.TextFG)
 }
 
-func renderStatusBar(width int, st FooterState, styles FooterStyles) string {
+func renderStatusBar(width int, st footerState, styles footerStyles) string {
 	legendPlain := truncatePlain(st.Legend, width)
 	legendW := runeWidth(legendPlain)
 
@@ -151,7 +151,7 @@ func renderStatusBar(width int, st FooterState, styles FooterStyles) string {
 	return applyBar(linePlain, styles.StatusBG, styles.StatusFG)
 }
 
-func renderModeSegment(colW int, st FooterState, styles FooterStyles) string {
+func renderModeSegment(colW int, st footerState, styles footerStyles) string {
 	if colW <= 0 {
 		return ""
 	}
@@ -167,7 +167,7 @@ func renderModeSegment(colW int, st FooterState, styles FooterStyles) string {
 	return pill
 }
 
-func renderFileSegment(colW int, st FooterState, styles FooterStyles) string {
+func renderFileSegment(colW int, st footerState, styles footerStyles) string {
 	if colW <= 0 {
 		return ""
 	}
@@ -202,7 +202,7 @@ func renderFileSegment(colW int, st FooterState, styles FooterStyles) string {
 	return applyFG(filePlain, styles.FileNameFG, styles.TextFG) + inputPlain + pad
 }
 
-func renderFilterMarksSegment(colW int, st FooterState, styles FooterStyles, filterValW, marksW int) string {
+func renderFilterMarksSegment(colW int, st footerState, styles footerStyles, filterValW, marksW int) string {
 	if colW <= 0 {
 		return ""
 	}

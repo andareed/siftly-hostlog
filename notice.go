@@ -35,12 +35,12 @@ func noticeText(msg, kind string) string {
 
 func (m *model) startNotice(msg, msgType string, d time.Duration) tea.Cmd {
 	// set current notice
-	m.noticeMsg = msg
-	m.noticeType = msgType
+	m.ui.noticeMsg = msg
+	m.ui.noticeType = msgType
 
 	// bump sequence to invalidate older timers
-	m.noticeSeq++
-	id := m.noticeSeq
+	m.ui.noticeSeq++
+	id := m.ui.noticeSeq
 
 	// schedule a clear for this specific notice id
 	return tea.Tick(d, func(time.Time) tea.Msg { return clearNoticeMsg{id: id} })
