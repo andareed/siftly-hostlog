@@ -24,22 +24,16 @@ func (m *model) runCommand() tea.Cmd {
 
 	case CmdComment:
 		m.addComment(m.ci.buf)
-		m.viewport.SetContent(m.renderTable())
 		return m.startNotice("Comment added", "", noticeDuration)
 	}
 	return nil
 }
 
-func (m *model) exitCommandMode() {
-	m.ci = CommandInput{}
-	m.currentMode = modeView
-}
-
 func (m *model) handleCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// universal cancel
 	if msg.Type == tea.KeyEsc {
-		m.exitCommandMode()
-		return m, nil
+		cmd := m.exitCommand(true)
+		return m, cmd
 	}
 
 	// constrained command: mark
@@ -50,9 +44,8 @@ func (m *model) handleCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// commit
 	if msg.Type == tea.KeyEnter {
 		cmd := m.runCommand() // returns tea.Cmd or nil
-		m.exitCommandMode()
-		m.viewport.SetContent(m.renderTable())
-		return m, cmd
+		exitCmd := m.exitCommand(true)
+		return m, tea.Batch(cmd, exitCmd)
 	}
 
 	// editing

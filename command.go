@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 type Command int
 
@@ -74,10 +76,6 @@ func (m *model) commandHintsLine(cmd Command) string {
 	}
 }
 
-func (m *model) idleCommandHintsLine() string {
-	return "/ search   f filter   : jump   m mark   # comment"
-}
-
 // activeCommandLine returns the command prompt text for the footer status line.
 func (m *model) activeCommandLine() string {
 	badge := m.commandBadge(m.ci.cmd)
@@ -85,9 +83,44 @@ func (m *model) activeCommandLine() string {
 	return badge + " " + prompt + m.ci.buf
 }
 
-func (m *model) commandRightContext() string {
-	return fmt.Sprintf("%d/%d",
-		m.cursor+1,
-		len(m.filteredIndices),
-	)
+func (m *model) enterCommand(cmd Command, seed string, showHint bool, refresh bool) tea.Cmd {
+	m.ci.cmd = cmd
+	if seed != "" {
+		m.ci.buf = seed
+	} else {
+		switch cmd {
+		case CmdFilter:
+			if m.filterRegex != nil {
+				m.ci.buf = m.filterRegex.String()
+			} else {
+				m.ci.buf = ""
+			}
+		case CmdSearch:
+			if m.searchRegex != nil {
+				m.ci.buf = m.searchRegex.String()
+			} else {
+				m.ci.buf = ""
+			}
+		default:
+			m.ci.buf = ""
+		}
+	}
+
+	m.currentMode = modeCommand
+	if refresh {
+		m.refreshView("enter-command", false)
+	}
+	if showHint {
+		return m.startNotice(m.commandHintsLine(cmd), "info", noticeDuration)
+	}
+	return nil
+}
+
+func (m *model) exitCommand(refresh bool) tea.Cmd {
+	m.ci = CommandInput{}
+	m.currentMode = modeView
+	if refresh {
+		m.refreshView("exit-command", false)
+	}
+	return nil
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -45,14 +44,13 @@ func (m *model) handleMarkCommandKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.MarkCurrent(mark)
 		m.currentMode = modeView
 
-		// Update once
-		m.viewport.SetContent(m.renderTable())
+		m.refreshView("mark", false)
 
 		// Notice only on actual change
 		return m, m.startNotice(
 			fmt.Sprintf("Row %d marked [%s]", m.cursor+1, msg.String()),
 			"",
-			1500*time.Millisecond,
+			noticeDuration,
 		)
 	}
 
