@@ -1,0 +1,4272 @@
+{
+  "version": 1,
+  "header": [
+    {
+      "Name": "﻿Time",
+      "Index": 0,
+      "Role": 0,
+      "Visible": true,
+      "MinWidth": 8,
+      "Weight": 1,
+      "Width": 22
+    },
+    {
+      "Name": "Host",
+      "Index": 1,
+      "Role": 0,
+      "Visible": true,
+      "MinWidth": 8,
+      "Weight": 1,
+      "Width": 22
+    },
+    {
+      "Name": "Details",
+      "Index": 2,
+      "Role": 1,
+      "Visible": true,
+      "MinWidth": 30,
+      "Weight": 5,
+      "Width": 101
+    },
+    {
+      "Name": "Appliance",
+      "Index": 3,
+      "Role": 0,
+      "Visible": true,
+      "MinWidth": 8,
+      "Weight": 1,
+      "Width": 22
+    },
+    {
+      "Name": "MAC Address",
+      "Index": 4,
+      "Role": 0,
+      "Visible": true,
+      "MinWidth": 8,
+      "Weight": 1,
+      "Width": 22
+    },
+    {
+      "Name": "IPv6 Address",
+      "Index": 5,
+      "Role": 0,
+      "Visible": false,
+      "MinWidth": 8,
+      "Weight": 0,
+      "Width": 0
+    },
+    {
+      "Name": "",
+      "Index": 6,
+      "Role": 0,
+      "Visible": false,
+      "MinWidth": 8,
+      "Weight": 0,
+      "Width": 0
+    }
+  ],
+  "rows": [
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756256",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12573820633657449528,
+      "originalIndex": 1
+    },
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756255",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9734289677286262225,
+      "originalIndex": 2
+    },
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756245",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1702433418368373046,
+      "originalIndex": 3
+    },
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756243",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18413132532489371136,
+      "originalIndex": 4
+    },
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756242",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3993032840425406809,
+      "originalIndex": 5
+    },
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756209",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3750413502812771970,
+      "originalIndex": 6
+    },
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756208",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16903071626031222667,
+      "originalIndex": 7
+    },
+    {
+      "cols": [
+        "Mon Jul 21 08:16:55 BST 2025:5756207",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9795309547470297908,
+      "originalIndex": 8
+    },
+    {
+      "cols": [
+        "Mon Jul 21 05:39:04 BST 2025:5719014",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1634865078724618316,
+      "originalIndex": 9
+    },
+    {
+      "cols": [
+        "Mon Jul 21 05:39:04 BST 2025:5719013",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12487341541425924633,
+      "originalIndex": 10
+    },
+    {
+      "cols": [
+        "Mon Jul 21 05:39:04 BST 2025:5718986",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14721071952516137868,
+      "originalIndex": 11
+    },
+    {
+      "cols": [
+        "Mon Jul 21 05:39:04 BST 2025:5718985",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5121030255898711581,
+      "originalIndex": 12
+    },
+    {
+      "cols": [
+        "Mon Jul 21 05:39:04 BST 2025:5718984",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7532702122703776814,
+      "originalIndex": 13
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:07 BST 2025:5593801",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3850539469968661189,
+      "originalIndex": 14
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:07 BST 2025:5593800",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12164884551369938586,
+      "originalIndex": 15
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:07 BST 2025:5593757",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7070125352004343003,
+      "originalIndex": 16
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:07 BST 2025:5593755",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16712288752297219305,
+      "originalIndex": 17
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:07 BST 2025:5593754",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5634494834695141332,
+      "originalIndex": 18
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593740",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2918420202911138224,
+      "originalIndex": 19
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593739",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5727552954359889502,
+      "originalIndex": 20
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593729",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5336779543315179919,
+      "originalIndex": 21
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593727",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2480259587607845529,
+      "originalIndex": 22
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593726",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13471834362542920164,
+      "originalIndex": 23
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593693",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14128694258578425399,
+      "originalIndex": 24
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593692",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11567952027737670062,
+      "originalIndex": 25
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:43:02 BST 2025:5593691",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4163219660066030201,
+      "originalIndex": 26
+    },
+    {
+      "cols": [
+        "Sun Jul 20 20:01:04 BST 2025:5586032",
+        "10.4.4.20",
+        "IOC Scan Stats - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14256167065174890,
+      "originalIndex": 27
+    },
+    {
+      "cols": [
+        "Sun Jul 20 18:05:11 BST 2025:5556551",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 616474057765190789,
+      "originalIndex": 28
+    },
+    {
+      "cols": [
+        "Sun Jul 20 18:05:11 BST 2025:5556550",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12082406334149437450,
+      "originalIndex": 29
+    },
+    {
+      "cols": [
+        "Sun Jul 20 18:05:11 BST 2025:5556524",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6629041501345929476,
+      "originalIndex": 30
+    },
+    {
+      "cols": [
+        "Sun Jul 20 18:05:11 BST 2025:5556523",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12473462149662479097,
+      "originalIndex": 31
+    },
+    {
+      "cols": [
+        "Sun Jul 20 18:05:11 BST 2025:5556522",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3179388816741269226,
+      "originalIndex": 32
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5424028",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6933391855718553274,
+      "originalIndex": 33
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5424027",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15687063264159621927,
+      "originalIndex": 34
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5424017",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6496460273368434138,
+      "originalIndex": 35
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5424015",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7226624028310440888,
+      "originalIndex": 36
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5424014",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8303141765572986337,
+      "originalIndex": 37
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5423980",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11727613600460753606,
+      "originalIndex": 38
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5423979",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7788929332862240146,
+      "originalIndex": 39
+    },
+    {
+      "cols": [
+        "Sun Jul 20 09:09:09 BST 2025:5423978",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 32404601135814007,
+      "originalIndex": 40
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:04 BST 2025:5410868",
+        "10.4.4.20",
+        "Nmap-OS Fingerprint(Ver. 5.3) - Failed to learn Nmap-OS Fingerprint(Ver. 5.3) : Nmap could not find an open port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7488293775884930267,
+      "originalIndex": 41
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:00 BST 2025:5410859",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1408186710888643112,
+      "originalIndex": 42
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:00 BST 2025:5410858",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10205939304588760803,
+      "originalIndex": 43
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:00 BST 2025:5410848",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15732422349796343552,
+      "originalIndex": 44
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:00 BST 2025:5410846",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15567062792652075194,
+      "originalIndex": 45
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:00 BST 2025:5410845",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2513977139854153297,
+      "originalIndex": 46
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:00 BST 2025:5410822",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"Printers:Pending\" to \"{Untrusted} Unknown Miscellaneous Devices:Match\" due to condition . Reason: Finished checking Open Ports. Duration: less than a second",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15678935577577596231,
+      "originalIndex": 47
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:13:00 BST 2025:5410819",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"{Untrusted} Unknown Miscellaneous Devices:Match\" to \"Printers:Pending\" due to condition . Reason: Open Ports scan result is ignored because it is older than 4 days. Duration: 5 seconds ",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16879435250459405415,
+      "originalIndex": 48
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410818",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7877259035444284242,
+      "originalIndex": 49
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410817",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17763487719710560511,
+      "originalIndex": 50
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410807",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18147236771662355332,
+      "originalIndex": 51
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410805",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1476754708241328106,
+      "originalIndex": 52
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410804",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9612256917407783655,
+      "originalIndex": 53
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410770",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14477861075807359029,
+      "originalIndex": 54
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410769",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 696575779759729103,
+      "originalIndex": 55
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410768",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11453935968577683934,
+      "originalIndex": 56
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410766",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"Network Devices:Pending\" to \"{Untrusted} Unknown Miscellaneous Devices:Match\" due to condition . Reason: Property update. Duration: less than a second",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14651583611344737125,
+      "originalIndex": 57
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410764",
+        "10.4.4.20",
+        "NIC Vendor Value - ASIX ELECTRONICS CORPORATION",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7770344293513961073,
+      "originalIndex": 58
+    },
+    {
+      "cols": [
+        "Sun Jul 20 08:12:55 BST 2025:5410763",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"{Untrusted} Unknown Miscellaneous Devices:Match\" to \"Network Devices:Pending\" due to condition . Reason: NIC Vendor value is ignored because it is older than 4 days. Duration: 4 days and 8 hours ",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2215729822463050498,
+      "originalIndex": 59
+    },
+    {
+      "cols": [
+        "Sun Jul 20 06:31:18 BST 2025:5385219",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6731148034069422357,
+      "originalIndex": 60
+    },
+    {
+      "cols": [
+        "Sun Jul 20 06:31:18 BST 2025:5385218",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10976703947505239258,
+      "originalIndex": 61
+    },
+    {
+      "cols": [
+        "Sun Jul 20 06:31:18 BST 2025:5385192",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15757755851840549608,
+      "originalIndex": 62
+    },
+    {
+      "cols": [
+        "Sun Jul 20 06:31:18 BST 2025:5385191",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15811894452039969737,
+      "originalIndex": 63
+    },
+    {
+      "cols": [
+        "Sun Jul 20 06:31:18 BST 2025:5385190",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12217917793346787002,
+      "originalIndex": 64
+    },
+    {
+      "cols": [
+        "Sun Jul 20 00:21:10 BST 2025:5301193",
+        "10.4.4.20",
+        "NIC Vendor Value - Property value cleared: NIC Vendor Value - ASIX ELECTRONICS CORPORATION; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15407210627076074340,
+      "originalIndex": 65
+    },
+    {
+      "cols": [
+        "Sat Jul 19 21:51:06 BST 2025:5264546",
+        "10.4.4.20",
+        "IOC Scan Stats - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12740775346333419773,
+      "originalIndex": 66
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248375",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2029676718995924704,
+      "originalIndex": 67
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248374",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18162143245707455563,
+      "originalIndex": 68
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248364",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5967235748685420640,
+      "originalIndex": 69
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248362",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13369340738358779554,
+      "originalIndex": 70
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248361",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3755190689382902153,
+      "originalIndex": 71
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248328",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16172318262167951000,
+      "originalIndex": 72
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248327",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3928716580373417095,
+      "originalIndex": 73
+    },
+    {
+      "cols": [
+        "Sat Jul 19 20:43:58 BST 2025:5248326",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10537875169659303126,
+      "originalIndex": 74
+    },
+    {
+      "cols": [
+        "Sat Jul 19 18:57:25 BST 2025:5222436",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18152534016210471507,
+      "originalIndex": 75
+    },
+    {
+      "cols": [
+        "Sat Jul 19 18:57:25 BST 2025:5222435",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7627232907300632102,
+      "originalIndex": 76
+    },
+    {
+      "cols": [
+        "Sat Jul 19 18:57:25 BST 2025:5222409",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2380799748936298588,
+      "originalIndex": 77
+    },
+    {
+      "cols": [
+        "Sat Jul 19 18:57:25 BST 2025:5222408",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6757793670883247479,
+      "originalIndex": 78
+    },
+    {
+      "cols": [
+        "Sat Jul 19 18:57:25 BST 2025:5222407",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12117328909818832618,
+      "originalIndex": 79
+    },
+    {
+      "cols": [
+        "Sat Jul 19 15:21:10 BST 2025:5171926",
+        "10.4.4.20",
+        "Host is internal - Yes",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11092615499266910501,
+      "originalIndex": 80
+    },
+    {
+      "cols": [
+        "Sat Jul 19 15:21:10 BST 2025:5171925",
+        "10.4.4.20",
+        "Host is internal - Property value cleared: Host is internal - Yes; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4686071549848760389,
+      "originalIndex": 81
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082176",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1950768887922839722,
+      "originalIndex": 82
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082175",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 335355259292299811,
+      "originalIndex": 83
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082165",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10097023723172143580,
+      "originalIndex": 84
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082163",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15904909793731565238,
+      "originalIndex": 85
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082162",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14184536342214361803,
+      "originalIndex": 86
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082132",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6354280410277917780,
+      "originalIndex": 87
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082131",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10804844148776828303,
+      "originalIndex": 88
+    },
+    {
+      "cols": [
+        "Sat Jul 19 09:10:05 BST 2025:5082130",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9124619647087869342,
+      "originalIndex": 89
+    },
+    {
+      "cols": [
+        "Sat Jul 19 07:23:32 BST 2025:5055003",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2089740198993490284,
+      "originalIndex": 90
+    },
+    {
+      "cols": [
+        "Sat Jul 19 07:23:32 BST 2025:5055002",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12226750197805897455,
+      "originalIndex": 91
+    },
+    {
+      "cols": [
+        "Sat Jul 19 07:23:32 BST 2025:5054976",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 844038029189111819,
+      "originalIndex": 92
+    },
+    {
+      "cols": [
+        "Sat Jul 19 07:23:32 BST 2025:5054975",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11728403712817955094,
+      "originalIndex": 93
+    },
+    {
+      "cols": [
+        "Sat Jul 19 07:23:32 BST 2025:5054974",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16568265825096352613,
+      "originalIndex": 94
+    },
+    {
+      "cols": [
+        "Fri Jul 18 23:41:08 BST 2025:4947175",
+        "10.4.4.20",
+        "IOC Scan Stats - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11983326008867983621,
+      "originalIndex": 95
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916290",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9457441520707006798,
+      "originalIndex": 96
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916289",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9287651120168199066,
+      "originalIndex": 97
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916279",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2283797295815414649,
+      "originalIndex": 98
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916277",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5876706096161825107,
+      "originalIndex": 99
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916276",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4320250923031086442,
+      "originalIndex": 100
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916243",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1959521280850776432,
+      "originalIndex": 101
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916242",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13324415522249696969,
+      "originalIndex": 102
+    },
+    {
+      "cols": [
+        "Fri Jul 18 21:36:12 BST 2025:4916241",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7002647074695968650,
+      "originalIndex": 103
+    },
+    {
+      "cols": [
+        "Fri Jul 18 19:49:39 BST 2025:4888206",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13204973850521736152,
+      "originalIndex": 104
+    },
+    {
+      "cols": [
+        "Fri Jul 18 19:49:39 BST 2025:4888205",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2409271474025163737,
+      "originalIndex": 105
+    },
+    {
+      "cols": [
+        "Fri Jul 18 19:49:39 BST 2025:4888179",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8610294674238011782,
+      "originalIndex": 106
+    },
+    {
+      "cols": [
+        "Fri Jul 18 19:49:39 BST 2025:4888178",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17591582839931919233,
+      "originalIndex": 107
+    },
+    {
+      "cols": [
+        "Fri Jul 18 19:49:39 BST 2025:4888177",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 223052549026253032,
+      "originalIndex": 108
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746496",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18259999897187759681,
+      "originalIndex": 109
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746495",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6739607684855770772,
+      "originalIndex": 110
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746484",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9159736198970204854,
+      "originalIndex": 111
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746482",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2960177732270748544,
+      "originalIndex": 112
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746481",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16791197517461812287,
+      "originalIndex": 113
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746447",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11042828090830231557,
+      "originalIndex": 114
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746446",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15443782192247850668,
+      "originalIndex": 115
+    },
+    {
+      "cols": [
+        "Fri Jul 18 10:02:19 BST 2025:4746445",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13385811129129887739,
+      "originalIndex": 116
+    },
+    {
+      "cols": [
+        "Fri Jul 18 08:15:46 BST 2025:4719345",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12238516080852720183,
+      "originalIndex": 117
+    },
+    {
+      "cols": [
+        "Fri Jul 18 08:15:46 BST 2025:4719344",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16141050862485055888,
+      "originalIndex": 118
+    },
+    {
+      "cols": [
+        "Fri Jul 18 08:15:46 BST 2025:4719325",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1070279648388151569,
+      "originalIndex": 119
+    },
+    {
+      "cols": [
+        "Fri Jul 18 08:15:46 BST 2025:4719324",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12400175860093701814,
+      "originalIndex": 120
+    },
+    {
+      "cols": [
+        "Fri Jul 18 08:15:46 BST 2025:4719323",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10840580491434771195,
+      "originalIndex": 121
+    },
+    {
+      "cols": [
+        "Fri Jul 18 01:31:10 BST 2025:4613506",
+        "10.4.4.20",
+        "IOC Scan Stats - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 318730197650096263,
+      "originalIndex": 122
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553666",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5584799105868728250,
+      "originalIndex": 123
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553665",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6173726554941457491,
+      "originalIndex": 124
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553655",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6865277619310149146,
+      "originalIndex": 125
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553643",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15532477314303825765,
+      "originalIndex": 126
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553641",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9425188278116537483,
+      "originalIndex": 127
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553640",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13732100194799146482,
+      "originalIndex": 128
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553631",
+        "10.4.4.20",
+        "Windows SecureConnector Systray Display - None",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16361516519445584830,
+      "originalIndex": 129
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553630",
+        "10.4.4.20",
+        "Windows Manageable SecureConnector - No",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5101481151969955268,
+      "originalIndex": 130
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553629",
+        "10.4.4.20",
+        "Windows SecureConnector Deployment Type - None",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10311330302554553035,
+      "originalIndex": 131
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553603",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17443633377227174435,
+      "originalIndex": 132
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553602",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17620338482949670058,
+      "originalIndex": 133
+    },
+    {
+      "cols": [
+        "Thu Jul 17 22:28:26 BST 2025:4553601",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11541153897777701,
+      "originalIndex": 134
+    },
+    {
+      "cols": [
+        "Thu Jul 17 20:41:53 BST 2025:4517169",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9735371354032606594,
+      "originalIndex": 135
+    },
+    {
+      "cols": [
+        "Thu Jul 17 20:41:53 BST 2025:4517168",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17985212288512194621,
+      "originalIndex": 136
+    },
+    {
+      "cols": [
+        "Thu Jul 17 20:41:53 BST 2025:4517142",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11664825860124436896,
+      "originalIndex": 137
+    },
+    {
+      "cols": [
+        "Thu Jul 17 20:41:53 BST 2025:4517141",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15538125523716795329,
+      "originalIndex": 138
+    },
+    {
+      "cols": [
+        "Thu Jul 17 20:41:53 BST 2025:4517140",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17337725618262575730,
+      "originalIndex": 139
+    },
+    {
+      "cols": [
+        "Thu Jul 17 14:21:10 BST 2025:4406537",
+        "10.4.4.20",
+        "Windows SecureConnector Systray Display - Property value cleared: Windows SecureConnector Systray Display - None; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12383079744222956693,
+      "originalIndex": 140
+    },
+    {
+      "cols": [
+        "Thu Jul 17 14:21:10 BST 2025:4406534",
+        "10.4.4.20",
+        "Windows Manageable SecureConnector - Property value cleared: Windows Manageable SecureConnector - No; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14835618507712539589,
+      "originalIndex": 141
+    },
+    {
+      "cols": [
+        "Thu Jul 17 14:21:10 BST 2025:4406530",
+        "10.4.4.20",
+        "Windows SecureConnector Deployment Type - Property value cleared: Windows SecureConnector Deployment Type - None; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5862749237801935508,
+      "originalIndex": 142
+    },
+    {
+      "cols": [
+        "Thu Jul 17 14:09:20 BST 2025:4403127",
+        "10.4.4.20",
+        "Policy \"Report On Results\"  - Evaluated host. Status is \"Report On Results:Unmatched\" due to groups filter . Context: Policy activated.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11117985302328237363,
+      "originalIndex": 143
+    },
+    {
+      "cols": [
+        "Thu Jul 17 14:03:25 BST 2025:4402097",
+        "10.4.4.20",
+        "Policy \"GroupAddtition Timespan Check\"  - Evaluated host. Status is \"GroupAddtition Timespan Check:Unmatched\" due to groups filter . Context: Policy activated.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15476300471064707767,
+      "originalIndex": 144
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348078",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4272988458380219661,
+      "originalIndex": 145
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348077",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7279824923842329788,
+      "originalIndex": 146
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348067",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10737160877134744749,
+      "originalIndex": 147
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348065",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17283004995617361011,
+      "originalIndex": 148
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348064",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14080992771502852746,
+      "originalIndex": 149
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348030",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14463712696277984051,
+      "originalIndex": 150
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348029",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17276325643852392981,
+      "originalIndex": 151
+    },
+    {
+      "cols": [
+        "Thu Jul 17 10:54:33 BST 2025:4348028",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12603276592918431084,
+      "originalIndex": 152
+    },
+    {
+      "cols": [
+        "Thu Jul 17 09:08:00 BST 2025:4319779",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8062242360062918377,
+      "originalIndex": 153
+    },
+    {
+      "cols": [
+        "Thu Jul 17 09:08:00 BST 2025:4319778",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5356116887983277534,
+      "originalIndex": 154
+    },
+    {
+      "cols": [
+        "Thu Jul 17 09:08:00 BST 2025:4319751",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5046402540900742898,
+      "originalIndex": 155
+    },
+    {
+      "cols": [
+        "Thu Jul 17 09:08:00 BST 2025:4319750",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3976450724341931709,
+      "originalIndex": 156
+    },
+    {
+      "cols": [
+        "Thu Jul 17 09:08:00 BST 2025:4319749",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7176680510038109591,
+      "originalIndex": 157
+    },
+    {
+      "cols": [
+        "Thu Jul 17 03:21:12 BST 2025:4216580",
+        "10.4.4.20",
+        "IOC Scan Stats - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6153238301105711784,
+      "originalIndex": 158
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135612",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 766921214920288298,
+      "originalIndex": 159
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135611",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7327596364523668899,
+      "originalIndex": 160
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135601",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2595506641122463836,
+      "originalIndex": 161
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135599",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10812904903676018360,
+      "originalIndex": 162
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135598",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16899791259345015009,
+      "originalIndex": 163
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135565",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1452447418274448649,
+      "originalIndex": 164
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135564",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16426511771646203200,
+      "originalIndex": 165
+    },
+    {
+      "cols": [
+        "Wed Jul 16 23:20:40 BST 2025:4135563",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18440412590772749483,
+      "originalIndex": 166
+    },
+    {
+      "cols": [
+        "Wed Jul 16 21:34:07 BST 2025:4102004",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6311356858276805642,
+      "originalIndex": 167
+    },
+    {
+      "cols": [
+        "Wed Jul 16 21:34:07 BST 2025:4102003",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Failed to resolve host property",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12661686117307434467,
+      "originalIndex": 168
+    },
+    {
+      "cols": [
+        "Wed Jul 16 21:34:07 BST 2025:4101977",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2929022913642876417,
+      "originalIndex": 169
+    },
+    {
+      "cols": [
+        "Wed Jul 16 21:34:07 BST 2025:4101976",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13572438465022937894,
+      "originalIndex": 170
+    },
+    {
+      "cols": [
+        "Wed Jul 16 21:34:07 BST 2025:4101975",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16482652959518997503,
+      "originalIndex": 171
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:48:14 BST 2025:3971259",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12007681476282652762,
+      "originalIndex": 172
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:40 BST 2025:3968334",
+        "10.4.4.20",
+        "Switch Port Configurations - snmp trap mac-notification change removed",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4930119185825128134,
+      "originalIndex": 173
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:40 BST 2025:3968333",
+        "10.4.4.20",
+        "Switch Port Configurations - snmp trap mac-notification change added",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5806905419607286063,
+      "originalIndex": 174
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:40 BST 2025:3968332",
+        "10.4.4.20",
+        "Switch Port Configurations - switchport access vlan 1044",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12229642546216722061,
+      "originalIndex": 175
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:40 BST 2025:3968331",
+        "10.4.4.20",
+        "Switch Port Configurations - FastEthernet0/5",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5560364516051969736,
+      "originalIndex": 176
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:40 BST 2025:3968327",
+        "10.4.4.20",
+        "Switch Port Configurations - Switch Port Configurations no longer includes switchport access vlan 1040; Context: Recheck",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2206535593677308719,
+      "originalIndex": 177
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:34 BST 2025:3968287",
+        "10.4.4.20",
+        "Manual - Action completed VLAN re-assignment completed (port 10.2.0.50:10005 moved to VLAN 1044) - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6039702812832095081,
+      "originalIndex": 178
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:34 BST 2025:3968276",
+        "10.4.4.20",
+        "Switch Port VLAN Name - V-CLIENT2",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10896412482323937537,
+      "originalIndex": 179
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:34 BST 2025:3968273",
+        "10.4.4.20",
+        "Switch Port Action - Assigned to VLAN 1044",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17827550200976718145,
+      "originalIndex": 180
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:34 BST 2025:3968270",
+        "10.4.4.20",
+        "Switch Port VLAN - 1044",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18363627801550951379,
+      "originalIndex": 181
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:27 BST 2025:3967914",
+        "10.4.4.20",
+        "Switch Port Configurations - snmp trap mac-notification change removed",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15019396513445396052,
+      "originalIndex": 182
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:27 BST 2025:3967913",
+        "10.4.4.20",
+        "Switch Port Configurations - snmp trap mac-notification change added",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11101148342911716853,
+      "originalIndex": 183
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:27 BST 2025:3967912",
+        "10.4.4.20",
+        "Switch Port Configurations - switchport access vlan 1040",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10412577791052788607,
+      "originalIndex": 184
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:27 BST 2025:3967911",
+        "10.4.4.20",
+        "Switch Port Configurations - FastEthernet0/5",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10228013476668985138,
+      "originalIndex": 185
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:34:27 BST 2025:3967909",
+        "10.4.4.20",
+        "Switch Port Configurations - Switch Port Configurations no longer includes switchport access vlan 1044; Context: Recheck",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14844204840158783067,
+      "originalIndex": 186
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:07:31 BST 2025:3963495",
+        "10.4.4.20",
+        "Switch Port VLAN Name - V-CLIENT",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10063694731626570126,
+      "originalIndex": 187
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:07:31 BST 2025:3963492",
+        "10.4.4.20",
+        "Switch Port Action - None",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7154868802186698763,
+      "originalIndex": 188
+    },
+    {
+      "cols": [
+        "Wed Jul 16 13:07:31 BST 2025:3963489",
+        "10.4.4.20",
+        "Switch Port VLAN - 1040",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7279821089148117549,
+      "originalIndex": 189
+    },
+    {
+      "cols": [
+        "Wed Jul 16 12:58:14 BST 2025:3953453",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2565306767853243390,
+      "originalIndex": 190
+    },
+    {
+      "cols": [
+        "Wed Jul 16 12:54:08 BST 2025:3952011",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14643778117429224478,
+      "originalIndex": 191
+    },
+    {
+      "cols": [
+        "Wed Jul 16 12:27:41 BST 2025:3945579",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4371442480557489196,
+      "originalIndex": 192
+    },
+    {
+      "cols": [
+        "Wed Jul 16 12:18:12 BST 2025:3943055",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18144545920827030189,
+      "originalIndex": 193
+    },
+    {
+      "cols": [
+        "Wed Jul 16 12:17:10 BST 2025:3942365",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7824587591545698405,
+      "originalIndex": 194
+    },
+    {
+      "cols": [
+        "Wed Jul 16 12:14:16 BST 2025:3941136",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10141620796972172539,
+      "originalIndex": 195
+    },
+    {
+      "cols": [
+        "Wed Jul 16 12:11:11 BST 2025:3940046",
+        "10.4.4.20",
+        "Manual - Action completed Action performed - Send Assign to VLAN: VLAN ID : 1044/ Do not perform action if port exceeds the Maximum allowed endpoints connected to port. : true; Schedule: Action starts immediately.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16509478929855322290,
+      "originalIndex": 196
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:52 BST 2025:3933284",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3360655935881123844,
+      "originalIndex": 197
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:52 BST 2025:3933283",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2937899493719019513,
+      "originalIndex": 198
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:52 BST 2025:3933265",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1147814112512798547,
+      "originalIndex": 199
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:52 BST 2025:3933263",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12022884515358146493,
+      "originalIndex": 200
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:52 BST 2025:3933262",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17567807797786312704,
+      "originalIndex": 201
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933219",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 715359873293558796,
+      "originalIndex": 202
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933218",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 751027592938930719,
+      "originalIndex": 203
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933205",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11082213418638432955,
+      "originalIndex": 204
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933203",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18174991707990348261,
+      "originalIndex": 205
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933202",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9758046267564598424,
+      "originalIndex": 206
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933172",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11073820540007421640,
+      "originalIndex": 207
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933171",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1674976727479626515,
+      "originalIndex": 208
+    },
+    {
+      "cols": [
+        "Wed Jul 16 11:46:47 BST 2025:3933170",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8227906675613599682,
+      "originalIndex": 209
+    },
+    {
+      "cols": [
+        "Wed Jul 16 10:00:14 BST 2025:3901613",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5489508056353436608,
+      "originalIndex": 210
+    },
+    {
+      "cols": [
+        "Wed Jul 16 10:00:14 BST 2025:3901612",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11374529706421321255,
+      "originalIndex": 211
+    },
+    {
+      "cols": [
+        "Wed Jul 16 10:00:14 BST 2025:3901592",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3763297695985298450,
+      "originalIndex": 212
+    },
+    {
+      "cols": [
+        "Wed Jul 16 10:00:14 BST 2025:3901591",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12509960768381150503,
+      "originalIndex": 213
+    },
+    {
+      "cols": [
+        "Wed Jul 16 10:00:14 BST 2025:3901590",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12886247197173797376,
+      "originalIndex": 214
+    },
+    {
+      "cols": [
+        "Wed Jul 16 05:11:14 BST 2025:3835782",
+        "10.4.4.20",
+        "IOC Scan Stats - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16590100207513600603,
+      "originalIndex": 215
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764077",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10479940684563765517,
+      "originalIndex": 216
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764076",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17952158520739124178,
+      "originalIndex": 217
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764066",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16525962176382423547,
+      "originalIndex": 218
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764064",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4816111953885446921,
+      "originalIndex": 219
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764063",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16681966176863347938,
+      "originalIndex": 220
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764029",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16814432846590865058,
+      "originalIndex": 221
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764028",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16297526403972406443,
+      "originalIndex": 222
+    },
+    {
+      "cols": [
+        "Wed Jul 16 00:12:54 BST 2025:3764027",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 613818012826097748,
+      "originalIndex": 223
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749234",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12334777054025761041,
+      "originalIndex": 224
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749233",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3864215528714273464,
+      "originalIndex": 225
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749223",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"Mobile:Pending\" to \"{Untrusted} Unknown Miscellaneous Devices:Match\" due to condition . Reason: Finished checking Open Ports. Duration: less than a second",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15407382984425187689,
+      "originalIndex": 226
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749221",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17421451793251220363,
+      "originalIndex": 227
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749219",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8768605238128875504,
+      "originalIndex": 228
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749218",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12454241160401545961,
+      "originalIndex": 229
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749208",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"Printers:Pending\" to \"Mobile:Pending\" due to condition . Reason: Finished checking Open Ports. Duration: less than a second",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14921112093954340194,
+      "originalIndex": 230
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:45 BST 2025:3749193",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"{Untrusted} Unknown Miscellaneous Devices:Match\" to \"Printers:Pending\" due to condition . Reason: Open Ports scan result is ignored because it is older than 4 days. Duration: 5 seconds ",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4954107441920176778,
+      "originalIndex": 231
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749192",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6740302382766716089,
+      "originalIndex": 232
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749191",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15063276496351741500,
+      "originalIndex": 233
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749181",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10148063369164719505,
+      "originalIndex": 234
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749179",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7101498719761467066,
+      "originalIndex": 235
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749178",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 898325975636530967,
+      "originalIndex": 236
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749144",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 102742960913071690,
+      "originalIndex": 237
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749143",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11062875272174231933,
+      "originalIndex": 238
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749142",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4211748743191358900,
+      "originalIndex": 239
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749141",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"Network Devices:Pending\" to \"{Untrusted} Unknown Miscellaneous Devices:Match\" due to condition . Reason: Property update. Duration: less than a second",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10036781120669203500,
+      "originalIndex": 240
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749139",
+        "10.4.4.20",
+        "NIC Vendor Value - ASIX ELECTRONICS CORPORATION",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4607711782450313777,
+      "originalIndex": 241
+    },
+    {
+      "cols": [
+        "Tue Jul 15 23:16:40 BST 2025:3749137",
+        "10.4.4.20",
+        "Policy \"1.1.01 Enterprise Discover\"  - Host evaluation changed from \"{Untrusted} Unknown Miscellaneous Devices:Match\" to \"Network Devices:Pending\" due to condition . Reason: NIC Vendor value is ignored because it is older than 4 days. Duration: 4 days and 8 hours ",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17617814910933342997,
+      "originalIndex": 242
+    },
+    {
+      "cols": [
+        "Tue Jul 15 22:26:21 BST 2025:3735627",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13198525408040943108,
+      "originalIndex": 243
+    },
+    {
+      "cols": [
+        "Tue Jul 15 22:26:21 BST 2025:3735626",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16561482670662461275,
+      "originalIndex": 244
+    },
+    {
+      "cols": [
+        "Tue Jul 15 22:26:21 BST 2025:3735606",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10292779552567960537,
+      "originalIndex": 245
+    },
+    {
+      "cols": [
+        "Tue Jul 15 22:26:21 BST 2025:3735605",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8346947087329157848,
+      "originalIndex": 246
+    },
+    {
+      "cols": [
+        "Tue Jul 15 22:26:21 BST 2025:3735604",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12518047692420996343,
+      "originalIndex": 247
+    },
+    {
+      "cols": [
+        "Tue Jul 15 15:21:10 BST 2025:3638100",
+        "10.4.4.20",
+        "NIC Vendor Value - Property value cleared: NIC Vendor Value - ASIX ELECTRONICS CORPORATION; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17619794399690493085,
+      "originalIndex": 248
+    },
+    {
+      "cols": [
+        "Tue Jul 15 14:21:10 BST 2025:3625810",
+        "10.4.4.20",
+        "Host is internal - Yes",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2525526747100063604,
+      "originalIndex": 249
+    },
+    {
+      "cols": [
+        "Tue Jul 15 14:21:10 BST 2025:3625788",
+        "10.4.4.20",
+        "Host is internal - Property value cleared: Host is internal - Yes; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1715157229801024415,
+      "originalIndex": 250
+    },
+    {
+      "cols": [
+        "Tue Jul 15 14:21:10 BST 2025:3625770",
+        "10.4.4.20",
+        "Admission - Admission no longer includes IP Address Change/ New Host/ Offline host became online; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10256161441881345699,
+      "originalIndex": 251
+    },
+    {
+      "cols": [
+        "Tue Jul 15 12:21:10 BST 2025:3595161",
+        "10.4.4.20",
+        "Admission - Admission no longer includes Host Connected to a Switch Port; Context: Purger",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5301037358843796403,
+      "originalIndex": 252
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588030",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2019049644848629592,
+      "originalIndex": 253
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588029",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 9486399785650921254,
+      "originalIndex": 254
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588028",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17321837605581562097,
+      "originalIndex": 255
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588027",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3289752231635379360,
+      "originalIndex": 256
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588026",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11427252098853243275,
+      "originalIndex": 257
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588025",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10070842052187058466,
+      "originalIndex": 258
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588024",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8223300605060587341,
+      "originalIndex": 259
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:48 BST 2025:3588023",
+        "10.4.4.20",
+        "Open Ports - Open Ports check ended",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 404792927797496316,
+      "originalIndex": 260
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587989",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16573976783375669975,
+      "originalIndex": 261
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587988",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 10378820558152113328,
+      "originalIndex": 262
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587978",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14533018897368919391,
+      "originalIndex": 263
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587976",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4350483242193596073,
+      "originalIndex": 264
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587975",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15999250805515678158,
+      "originalIndex": 265
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587942",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17256079308767195146,
+      "originalIndex": 266
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587941",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 7149382810111996385,
+      "originalIndex": 267
+    },
+    {
+      "cols": [
+        "Tue Jul 15 11:47:43 BST 2025:3587940",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12571924494899586104,
+      "originalIndex": 268
+    },
+    {
+      "cols": [
+        "Tue Jul 15 10:52:28 BST 2025:3573359",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5333989289312042075,
+      "originalIndex": 269
+    },
+    {
+      "cols": [
+        "Tue Jul 15 10:52:28 BST 2025:3573358",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3914076010059165700,
+      "originalIndex": 270
+    },
+    {
+      "cols": [
+        "Tue Jul 15 10:52:28 BST 2025:3573339",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11475762183782341173,
+      "originalIndex": 271
+    },
+    {
+      "cols": [
+        "Tue Jul 15 10:52:28 BST 2025:3573338",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1740527696269581722,
+      "originalIndex": 272
+    },
+    {
+      "cols": [
+        "Tue Jul 15 10:52:28 BST 2025:3573337",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8839253531595523103,
+      "originalIndex": 273
+    },
+    {
+      "cols": [
+        "Tue Jul 15 07:01:16 BST 2025:3523056",
+        "10.4.4.20",
+        "IOC Scan Stats - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 3444647112455855257,
+      "originalIndex": 274
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426997",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18300738771370425061,
+      "originalIndex": 275
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426996",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1417618597023852346,
+      "originalIndex": 276
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426986",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14871129634802238003,
+      "originalIndex": 277
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426984",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 2324002184626173153,
+      "originalIndex": 278
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426983",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14129862767805449098,
+      "originalIndex": 279
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426950",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12238798496689384924,
+      "originalIndex": 280
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426949",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 996171148386295818,
+      "originalIndex": 281
+    },
+    {
+      "cols": [
+        "Tue Jul 15 00:13:50 BST 2025:3426948",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1591041372679397487,
+      "originalIndex": 282
+    },
+    {
+      "cols": [
+        "Mon Jul 14 23:18:35 BST 2025:3410846",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14909259233104526099,
+      "originalIndex": 283
+    },
+    {
+      "cols": [
+        "Mon Jul 14 23:18:35 BST 2025:3410845",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4244148721668224186,
+      "originalIndex": 284
+    },
+    {
+      "cols": [
+        "Mon Jul 14 23:18:35 BST 2025:3410826",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16962642223321673553,
+      "originalIndex": 285
+    },
+    {
+      "cols": [
+        "Mon Jul 14 23:18:35 BST 2025:3410825",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 6248491181367855632,
+      "originalIndex": 286
+    },
+    {
+      "cols": [
+        "Mon Jul 14 23:18:35 BST 2025:3410824",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 13224092425987383055,
+      "originalIndex": 287
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263562",
+        "10.4.4.20",
+        "Function Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4924479190777581791,
+      "originalIndex": 288
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263561",
+        "10.4.4.20",
+        "OS Classification Score - -1",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 15349233230886995314,
+      "originalIndex": 289
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263548",
+        "10.4.4.20",
+        "Suggested Vendor and Model - (none)",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4972805873452810407,
+      "originalIndex": 290
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263546",
+        "10.4.4.20",
+        "Function Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 18000747104157606977,
+      "originalIndex": 291
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263545",
+        "10.4.4.20",
+        "OS Classification Score - 0",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 12580920185223965526,
+      "originalIndex": 292
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263515",
+        "10.4.4.20",
+        "Operating System - Failed to learn Operating System : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 1267459542627864559,
+      "originalIndex": 293
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263514",
+        "10.4.4.20",
+        "Vendor and Model - Failed to learn Vendor and Model : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 4518469980098081990,
+      "originalIndex": 294
+    },
+    {
+      "cols": [
+        "Mon Jul 14 12:39:57 BST 2025:3263513",
+        "10.4.4.20",
+        "Function - Failed to learn Function : No updated classification.",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 8213485409805232821,
+      "originalIndex": 295
+    },
+    {
+      "cols": [
+        "Mon Jul 14 11:44:42 BST 2025:3247245",
+        "10.4.4.20",
+        "Switch Port ACL - Failed to learn Switch Port ACL : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 17927508731684076922,
+      "originalIndex": 296
+    },
+    {
+      "cols": [
+        "Mon Jul 14 11:44:42 BST 2025:3247244",
+        "10.4.4.20",
+        "Switch OS - Failed to learn Switch OS : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 11687526496748769265,
+      "originalIndex": 297
+    },
+    {
+      "cols": [
+        "Mon Jul 14 11:44:42 BST 2025:3247224",
+        "10.4.4.20",
+        "Switch Port Connect - Failed to learn Switch Port Connect : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 5725091664039684959,
+      "originalIndex": 298
+    },
+    {
+      "cols": [
+        "Mon Jul 14 11:44:42 BST 2025:3247223",
+        "10.4.4.20",
+        "Switch Hostname - Failed to learn Switch Hostname : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 14803906890009586766,
+      "originalIndex": 299
+    },
+    {
+      "cols": [
+        "Mon Jul 14 11:44:42 BST 2025:3247222",
+        "10.4.4.20",
+        "Switch Port Action - Failed to learn Switch Port Action : Fail to detect the host switch port",
+        "10.2.1.51",
+        "c8a362c85d6e",
+        "",
+        ""
+      ],
+      "height": 1,
+      "id": 16330316835865765661,
+      "originalIndex": 300
+    }
+  ],
+  "marked": {},
+  "comments": {}
+}

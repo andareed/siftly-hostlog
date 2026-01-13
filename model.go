@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
 	"unicode/utf8"
 
 	"github.com/andareed/siftly-hostlog/clipboard"
@@ -24,14 +23,13 @@ import (
 type mode int
 
 const (
-	modView mode = iota
+	modeView mode = iota
 	modeFilter
 	modeMarking
-	modeComent
+	modeComment
+	modeCommand
 )
 
-//TODO Lets save all of its as JSON for when working on.
-//TODO Lets have a button to clear a marked back to normal shall we
 //TODO Replace the name renderedRow, as these are not rendered anymore
 
 type model struct {
@@ -49,6 +47,7 @@ type model struct {
 	commentRows         map[uint64]string    // map row index to string to store comments
 	showOnlyMarked      bool
 	filterRegex         *regexp.Regexp
+	searchRegex         *regexp.Regexp
 	filteredIndices     []int // to store the list of indicides that match the current regex
 	filterInput         textinput.Model
 	commentInput        textarea.Model
@@ -62,6 +61,7 @@ type model struct {
 	fileName            string // filename the data will be saved to
 	InitialPath         string
 	lastExportFileName  string
+	ci                  CommandInput
 }
 
 func (m *model) InitialiseUI() {
@@ -92,6 +92,13 @@ func (m *model) Init() tea.Cmd {
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if km, ok := msg.(tea.KeyMsg); ok {
+		log.Printf("KEY: %q type=%v mode=%v dialog=%T visible=%v",
+			km.String(), km.Type, m.currentMode,
+			m.activeDialog, m.activeDialog != nil && m.activeDialog.IsVisible(),
+		)
+	}
+
 	// Might be messy but all tick related messages need to be handle first and discard if necessary
 	switch fmt.Sprintf("%T", msg) {
 	case "cursor.BlinkMsg", "cursor.BlinkCanceledMsg":
@@ -100,15 +107,17 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	log.Printf("model:Update called with msg: %#T: %#v\n", msg, msg)
 
 	if m.activeDialog != nil && m.activeDialog.IsVisible() {
-		switch msg.(type) {
-		case tea.KeyMsg: //May need to WindowSizeMsg etc.. at a later date
-			log.Printf("model:Update:: Dialog box is active forward update to it")
-			// TODO Probably a good idea to write out a log with the type thats current active to save debug frustration
+		if km, ok := msg.(tea.KeyMsg); ok {
+			log.Printf("DIALOG UPDATE: %T got key %q\n", m.activeDialog, km.String())
+		}
+		log.Printf("model:Update:: Dialog box is active forward update to it\n")
+		if _, ok := msg.(tea.KeyMsg); ok {
 			var cmd tea.Cmd
 			m.activeDialog, cmd = m.activeDialog.Update(msg)
 			return m, cmd
 		}
 	}
+
 	switch msg := msg.(type) {
 	case clearNoticeMsg:
 		if msg.id == m.noticeSeq {
@@ -127,45 +136,45 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewport.SetContent(m.renderTable())
 		return m, nil
 	case dialogs.HelpRequestedMsg:
-		log.Printf("Updated was called with msg HelpRequestedMsg (should pop a help dialog box)")
+		log.Printf("Updated was called with msg HelpRequestedMsg (should pop a help dialog box)\n")
 		m.activeDialog = dialogs.NewHelpDialog(Keys.Legend())
 		m.activeDialog.Show()
 	case dialogs.SaveRequestedMsg:
-		log.Printf("Update was called with msg SaveRequestedMsg (should pop a dialog box)")
+		log.Printf("Update was called with msg SaveRequestedMsg (should pop a dialog box)\n")
 		m.activeDialog = dialogs.NewSaveDialog(defaultSaveName(*m), filepath.Dir(m.fileName))
 		m.activeDialog.Show()
 	case dialogs.SaveConfirmedMsg:
 		log.Printf("model:Update::Received SaveConfirmedMsg saving to the current file using path %q\n", msg.Path)
 		m.activeDialog.Hide()
 		if err := SaveModel(m, msg.Path); err != nil {
-			cmd := m.startNotice("Error", "", 1500*time.Millisecond)
+			cmd := m.startNotice("Error", "", noticeDuration)
 			return m, cmd
 		}
-		cmd := m.startNotice("Saved succeeded", "", 1500*time.Millisecond)
+		cmd := m.startNotice("Saved succeeded", "", noticeDuration)
 		m.fileName = msg.Path
 		return m, cmd
 	case dialogs.SaveCanceledMsg:
 		log.Printf("model:Update::Received SaveCanceledMsg from dialog and hiding the active dialog\n")
 		m.activeDialog.Hide()
 	case dialogs.ExportRequestedMsg:
-		log.Printf("Update wwas called with msg ExportRequestMsg (pop dialog for exports)")
+		log.Printf("Update wwas called with msg ExportRequestMsg (pop dialog for exports)\n")
 		m.activeDialog = dialogs.NewExportDialog(defaultExportName(*m), filepath.Dir(m.fileName))
 		// TODO: What filename should this default to for an export?
 		m.activeDialog.Show()
 	case dialogs.ExportConfirmedMsg:
 		// Screen Select should be exported as a csv
-		log.Printf("module:Update::ExportConfirmedMsg begin exporting to the file")
+		log.Printf("module:Update::ExportConfirmedMsg begin exporting to the file\n")
 		m.activeDialog.Hide()
 		// TODO: Insert call for exporting current selection to the csv
 		if err := ExportModel(m, msg.Path); err != nil {
-			cmd := m.startNotice("Export Error", "", 1500*time.Millisecond)
+			cmd := m.startNotice("Export Error", "", noticeDuration)
 			return m, cmd
 		}
-		cmd := m.startNotice("Exported succeeded", "", 1500*time.Millisecond)
+		cmd := m.startNotice("Exported succeeded", "", noticeDuration)
 		m.lastExportFileName = msg.Path
 		return m, cmd
 	case dialogs.ExportCanceledMsg:
-		log.Printf("model:Update:: Received ExportCanceledMsg, close down the dialog")
+		log.Printf("model:Update:: Received ExportCanceledMsg, close down the dialog\n")
 		m.activeDialog.Hide()
 	}
 
@@ -178,11 +187,13 @@ func (m *model) recomputeLayout(height int, width int) {
 	height -= 6 // TODO understand this better here? 2 is for the footer, header, plus borders probably
 	width -= 6
 	if m.drawerOpen {
+		drawerContentHeight := 8
+		m.drawerHeight = drawerContentHeight + 2
 		height -= m.drawerHeight
 		m.drawerPort.Width = width // Minus out the padding.
 		m.commentInput.SetWidth(width)
-		m.commentInput.SetHeight(8)
-		m.drawerPort.Height = 8
+		m.commentInput.SetHeight(drawerContentHeight)
+		m.drawerPort.Height = drawerContentHeight
 		m.drawerPort.Width = width
 	}
 	log.Printf("Update Received of type Windows Size Message."+
@@ -198,133 +209,55 @@ func (m *model) updateKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	// return m.handleDialogKey(msg)
 	// }
 	switch m.currentMode {
-	case modView:
+	case modeView:
 		return m.handleViewModeKey(msg)
-	case modeMarking:
-		return m.handleMarkingModeKey(msg)
-	case modeFilter:
-		return m.handleFilterKey(msg)
-	case modeComent:
-		return m.handleCommentKey(msg)
+	case modeCommand:
+		return m.handleCommandKey(msg)
 	}
 
 	return m, nil
 }
 
-// func (m *model) handleDialogKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-// var cmd tea.Cmd
-// switch msg.String() {
-// case "enter", "esc":
-// log.Printf("handleDialogKey: Enter or esc presssed on dialog")
-// }
-// return m, cmd
-//  }
-
-func (m *model) handleFilterKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	log.Println("handleFilterKey called..")
-	switch msg.String() {
-	case "enter", "esc":
-		log.Println("Enter or ESC Pressed")
-		//TODO: Defect here, when we edit twice this is no longer focussed. Why?
-		if m.filterInput.Focused() {
-			log.Printf("Input boxed classed as focussed so we can apply filter and reset mode back to View wth text : %s", m.filterInput.Value())
-			m.setFilterPattern(m.filterInput.Value())
-			m.currentMode = modView
-			m.filterInput.Blur()
-			//m.applyFilter()
-			cmd = m.startNotice(fmt.Sprintf("Filter pattern set to {%s}", m.filterRegex.String()), "", 1500*time.Millisecond)
-		}
-		return m, cmd
-	default:
-		log.Println("Generic character received and adding to the filter Input")
-		m.filterInput, cmd = m.filterInput.Update(msg)
-		return m, cmd
-	}
-	//return m, nil
-}
-
-func (m *model) handleCommentKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	log.Println("handleCommentKey called..")
-	switch msg.String() {
-	case "enter", "esc":
-		log.Println("Enter or Esc pressed")
-		if m.commentInput.Focused() {
-			// TODO: If the viewport is being used , will the input still be focussed, think so?
-			m.CommentCurrent(m.commentInput.Value()) // Save the comment to the map
-			m.currentMode = modView
-			m.commentInput.Blur()
-			m.viewport.SetContent(m.renderTable())
-			cmd = m.startNotice(fmt.Sprintf("Comment {$s} made to row {%d}", m.commentInput.Value(), m.cursor+1), "", 1500*time.Millisecond)
-		}
-		return m, cmd
-	default:
-		log.Println("Generic character received and adding to the filter Input")
-		m.commentInput, cmd = m.commentInput.Update(msg)
-		return m, cmd
-	}
-
-}
-
-func (m *model) MarkCurrent(colour MarkColor) {
-	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
-		return // This messed up as the cursor isn't at a point in the viewport
-	}
-	master := m.filteredIndices[m.cursor] // Gets the row
-	id := m.rows[master].id
-	if colour == MarkNone {
-		delete(m.markedRows, id)
-		log.Printf("Cursor: %d with Stable ID %d has been unmarked", m.cursor, id)
-	} else {
-		log.Printf("Cursor: %d with Stable ID %d is being marked with color %s", m.cursor, id, colour)
-		m.markedRows[id] = colour
-	}
-}
-
-func (m *model) handleMarkingModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	log.Println("handleMarkingModeKey called..")
-	//TODO: We can axe this switch now in favour or just using the enum
-	switch msg.String() {
-	case "r":
-		m.MarkCurrent(MarkRed)
-		m.currentMode = modView
-	case "g":
-		m.MarkCurrent(MarkGreen)
-		m.currentMode = modView
-	case "a":
-		m.MarkCurrent(MarkAmber)
-		m.currentMode = modView
-	case "c":
-		m.MarkCurrent(MarkNone)
-		m.currentMode = modView
-	case "esc":
-		m.currentMode = modView
-	}
-	cmd = m.startNotice(fmt.Sprintf("Row {%d} marked with colour {%s}", m.cursor+1, msg.String()), "", 1500*time.Millisecond)
-	m.viewport.SetContent(m.renderTable()) //TODO: Should the Setcontent and Renders be part of a proper update call. This is just ha hack (same as marking with a comment)
-	return m, cmd
-
-}
-
 func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
+	startCommand := func(c Command) tea.Cmd {
+		m.ci.cmd = c
+		m.ci.buf = ""
+		m.currentMode = modeCommand
+		return m.startNotice(m.commandHintsLine(c), "info", noticeDuration)
+	}
 
 	switch {
+	// Migrating to a command / input method
+	case key.Matches(msg, Keys.JumpToLineNo):
+		log.Println("Enabling Command: Jumping to specific line number if it exists")
+		cmd = startCommand(CmdJump)
+	case key.Matches(msg, Keys.Filter):
+		log.Println("Enabling Command: Filtering")
+		cmd = startCommand(CmdFilter)
+	case key.Matches(msg, Keys.MarkMode):
+		log.Println("Enable COmmand: Marking")
+		cmd = startCommand(CmdMark)
+	case key.Matches(msg, Keys.EditComment):
+		log.Println("Enable COmmand: Edit Comment")
+		cmd = startCommand(CmdComment)
+	//TODO: Implement Serach
 	case key.Matches(msg, Keys.Quit):
 		return m, tea.Quit
 	case key.Matches(msg, Keys.CopyRow):
 		log.Println("Key Combination for CopyRow To Clipboard")
 		cmd = m.copyRowToClipboard()
-	case key.Matches(msg, Keys.MarkMode):
-		m.currentMode = modeMarking
-		log.Println("Entering Mode: Marking")
+	case key.Matches(msg, Keys.JumpToStart):
+		log.Println("Jumping to start (if filtered will be first row in filter")
+		m.jumpToStart()
+	case key.Matches(msg, Keys.JumpToEnd):
+		log.Println("Jumping to end (if filtered will be last row in filter")
+		m.jumpToEnd()
 	case key.Matches(msg, Keys.ShowMarksOnly):
 		// Show Marks only
 		log.Println("Toggle for Show Marks Only has been pressed")
 		m.showOnlyMarked = !m.showOnlyMarked
-		cmd = m.startNotice(fmt.Sprintf("'Show Only Marked Rows' toggled {%b}", m.showOnlyMarked), "", 1500*time.Millisecond)
+		cmd = m.startNotice(fmt.Sprintf("'Show Only Marked Rows' toggled {%b}", m.showOnlyMarked), "", noticeDuration)
 		m.applyFilter()
 	case key.Matches(msg, Keys.NextMark):
 		// Next mark jump
@@ -334,22 +267,17 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		log.Println("Back once again: jumping to the previous mark")
 		m.jumpToPreviousMark()
 		m.ready = true
-	case key.Matches(msg, Keys.Filter):
-		// Set Filter
-		m.currentMode = modeFilter
-		m.filterInput.Focus()
-		log.Println("Entering Mode: Filter (Focus Box)")
 	case key.Matches(msg, Keys.ClearFilter):
 		// Clear Filter
 		log.Println("Shift F, clearing Filter")
 		m.setFilterPattern("") // Set the filter to nothing which will clear
-		cmd = m.startNotice("Cleared filter", "", 1500*time.Millisecond)
-	case key.Matches(msg, Keys.EditComment):
-		// Comment (Edit) if the drawer is open (i.e. C has been pressed previously)
-		if m.drawerOpen {
-			m.commentInput.Focus()
-			m.currentMode = modeComent
-		}
+		cmd = m.startNotice("Cleared filter", "", noticeDuration)
+	// case key.Matches(msg, Keys.EditComment):
+	// 	// Comment (Edit) if the drawer is open (i.e. C has been pressed previously)
+	// 	if m.drawerOpen {
+	// 		m.commentInput.Focus()
+	// 		m.currentMode = modeComment
+	// 	}
 	case key.Matches(msg, Keys.ShowComment):
 		// Comment in Drawer to be toggled opened / closed
 		m.drawerOpen = !m.drawerOpen
@@ -392,9 +320,9 @@ func (m *model) copyRowToClipboard() tea.Cmd {
 		row := m.rows[m.cursor]
 		text := row.Join("\t") // Tab Delimetered string
 		if err := clipboard.Copy(text); err != nil {
-			return m.startNotice("Error with Clipboard occurred.", "", 1500*time.Millisecond)
+			return m.startNotice("Error with Clipboard occurred.", "", noticeDuration)
 		} else {
-			return m.startNotice("Copied Row COntent to Clipboard", "", 1500*time.Millisecond)
+			return m.startNotice("Copied Row COntent to Clipboard", "", noticeDuration)
 		}
 	}
 	return nil
@@ -413,22 +341,6 @@ func (m *model) pageUp() {
 	if m.cursor < 0 {
 		m.cursor = 0
 	}
-}
-
-func (m *model) getCommentContent(rowIdx uint64) string {
-	// Probably want some error checking around the rowIdx
-	if c, ok := m.commentRows[rowIdx]; ok && c != "" {
-		return c
-	}
-	return "" // No comment, so returning blank
-}
-
-func (m *model) refreshDrawerContent() {
-	log.Printf("refreshDrawerContent called..")
-	currentComment := m.getCommentContent(m.currentRowHashID())
-	log.Printf("Comment Input and Drawer Port being set to: %s", currentComment)
-	m.commentInput.SetValue(currentComment)
-	m.drawerPort.SetContent(currentComment)
 }
 
 func (m *model) currentRowHashID() uint64 {
@@ -463,110 +375,17 @@ func (m *model) jumpToHashID(hashId uint64) {
 	log.Printf("jumpToHashID: No match found for hashID[%d] so setting cursor to 0", hashId)
 }
 
-func (m *model) jumpToNextMark() {
-	log.Println("jumpToNextMark callled..")
-	n := len(m.filteredIndices)
-	if n == 0 {
+func (m *model) checkViewPortHasData() bool {
+	if len(m.filteredIndices) == 0 {
 		log.Println("filterIndicies is empty")
-		return
+		return false
 	}
 	if m.cursor < 0 {
 		log.Println("Cursor at 0 or below")
-		return
+		return false
 	}
-
-	for i := m.cursor + 1; i < len(m.filteredIndices); i++ {
-		rowIdx := m.filteredIndices[i]
-		row := m.rows[rowIdx]
-		if _, ok := m.markedRows[row.id]; ok {
-			log.Printf("Next mark found at %d \n", i)
-			m.cursor = i
-			return
-		}
-
-	}
-	log.Println("No next mark has been found")
-}
-
-func (m *model) jumpToPreviousMark() {
-	log.Println("jumpToPreviousMark called..")
-	n := len(m.filteredIndices)
-	if n == 0 {
-		log.Println("filteredIndicies is emtpy")
-	}
-	if m.cursor < 0 {
-		log.Println("Cursor at 0 or below")
-	}
-
-	for i := m.cursor - 1; i >= 0; i-- {
-		rowIdx := m.filteredIndices[i]
-		row := m.rows[rowIdx]
-		if _, ok := m.markedRows[row.id]; ok {
-			log.Println("Previous mark has been found")
-			m.cursor = i
-			return
-		}
-
-	}
-	log.Println("No previous mark has been found")
-}
-
-func (m *model) CommentCurrent(comment string) {
-	log.Printf("CommentCurrent called..\n")
-	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
-		return
-	}
-
-	idx := m.filteredIndices[m.cursor]
-	hashId := m.rows[idx].id
-	if comment == "" {
-		delete(m.commentRows, hashId)
-		log.Printf("Clear comment Index[%d] on HashID[%d]\n", idx, hashId)
-		return
-		//TODO: Probably need this sending a notificatoin
-	}
-	m.commentRows[hashId] = comment
-	log.Printf("Setting Comment[%s] to Index[%d] on HashID[%d]\n", comment, idx, hashId)
-}
-
-// region Filtering
-
-func (m *model) setFilterPattern(pattern string) error {
-	log.Printf("Setting Pattern to: %s\n", pattern)
-	if pattern == "" {
-		m.filterRegex = nil
-	} else {
-		re, err := regexp.Compile(pattern)
-		if err != nil {
-			return err
-		}
-		m.filterRegex = re
-	}
-	m.applyFilter()
-	return nil
-}
-
-func (m *model) includeRow(row renderedRow) bool {
-	log.Printf("includeRow called")
-
-	if m.showOnlyMarked {
-		if _, ok := m.markedRows[row.id]; !ok {
-			log.Printf("row[%d]: EXCLUDE (not marked)", row.id)
-			return false
-		}
-	}
-
-	if m.filterRegex != nil {
-		match := m.filterRegex.MatchString(row.String())
-		log.Printf("applyFilter: filter applied checking row[%s] against pattern[%s] \n", row.String(), m.filterRegex)
-		if !match {
-			return false
-		}
-	}
-	log.Printf("applyFilter: %s is to be included", row.String())
 	return true
 }
-
 func (m *model) applyFilter() {
 	log.Printf("applyFilter called")
 	// Remember the Hash of what we have current selected
@@ -686,6 +505,62 @@ func (m *model) statusView() string {
 	return bar.Width(total).Render(line)
 }
 
+// footerView renders the 2-line footer using local (function-scoped) styles/state.
+// width is the terminal width (e.g. m.width from tea.WindowSizeMsg).
+func (m *model) footerView(width int) string {
+	log.Printf("footerView mode=%d cmd=%d\n", m.currentMode, m.ci.cmd)
+	styles := DefaultFooterStyles()
+
+	footerMode := CmdNone
+	modeInput := ""
+	switch m.currentMode {
+	case modeView:
+		footerMode = CmdNone
+	case modeFilter:
+		footerMode = CmdFilter
+	case modeMarking:
+		footerMode = CmdMark
+	case modeComment:
+		footerMode = CmdComment
+	case modeCommand:
+		switch m.ci.cmd {
+		case CmdJump:
+			footerMode = CmdJump
+		case CmdFilter:
+			footerMode = CmdFilter
+		case CmdSearch:
+			footerMode = CmdSearch
+		case CmdComment:
+			footerMode = CmdComment
+		case CmdMark:
+			footerMode = CmdMark
+		default:
+			footerMode = CmdNone
+		}
+		modeInput = m.activeCommandLine()
+	}
+
+	st := FooterState{
+		Mode:          footerMode,
+		ModeInput:     modeInput,
+		FileName:      defaultSaveName(*m),
+		FilterLabel:   "None",
+		MarksOnly:     m.showOnlyMarked,
+		Row:           m.cursor + 1,
+		TotalRows:     len(m.filteredIndices),
+		StatusMessage: "",
+		Legend:        "(? help · f filter · c comment)",
+	}
+	if m.filterRegex != nil && m.filterRegex.String() != "" {
+		st.FilterLabel = m.filterRegex.String()
+	}
+	if m.noticeMsg != "" {
+		st.StatusMessage = noticeInline(m.noticeMsg, m.noticeType)
+	}
+
+	return RenderFooter(width, st, styles)
+}
+
 func (m *model) noticeView(msg string, kind string) string {
 	if msg == "" {
 		return "" // nothing to show
@@ -711,7 +586,7 @@ func (m *model) noticeView(msg string, kind string) string {
 		icon, bg = "", "238" // neutral gray
 	}
 
-	// build the line
+	// build the lineg
 	text := msg
 	if icon != "" {
 		text = fmt.Sprintf("%s %s", icon, msg)
@@ -727,26 +602,27 @@ func (m *model) noticeView(msg string, kind string) string {
 	return st.Width(total).Render(text)
 }
 
-func (m *model) footerView() string {
-	// Deprecating for statusView
-	var sb strings.Builder
-
-	switch m.currentMode {
-	case modeMarking:
-		sb.WriteString(m.noticeView("Choose a color: (r)ed (g)reen (a)mber (c)lear | esc:cancel", ""))
-	case modeFilter:
-		sb.WriteString(inputStyle.Render(m.filterInput.View()))
-	case modeComent:
-		sb.WriteString("enter:save | esc:cancel")
-		//TODO:Not sure if i need this for drawerPort yet?
-		//sb.WriteString(m.drawerPort.View())
-		//sb.WriteString(inputStyle.Render(m.commentInput.View()))
-	default:
-		sb.WriteString(m.noticeView(m.noticeMsg, m.noticeType))
+func noticeInline(msg string, kind string) string {
+	if msg == "" {
+		return ""
 	}
-	sb.WriteString("\n")
-	sb.WriteString(m.statusView())
-	return sb.String()
+	var icon string
+	switch kind {
+	case "info":
+		icon = "ℹ"
+	case "success":
+		icon = "✓"
+	case "warn":
+		icon = "!"
+	case "error":
+		icon = "×"
+	default:
+		icon = ""
+	}
+	if icon == "" {
+		return msg
+	}
+	return fmt.Sprintf("%s %s", icon, msg)
 }
 
 func (m *model) View() string {
@@ -754,48 +630,26 @@ func (m *model) View() string {
 		return "loading..."
 	}
 
-	// 1) Build your base content (with or without drawer)
-	bordered := tableStyle.Render(m.viewport.View())
-
-	var main string
-	if m.drawerOpen {
-		drawerTitle := headerStyle.Render("Comments\n")
-		switch m.currentMode {
-		case modView:
-			// no side effects here (no Blur/SetCursor)
-			drawer := tableStyle.Render(drawerTitle + "\n" + m.commentInput.View())
-			main = appstyle.Render(lipgloss.JoinVertical(
-				lipgloss.Left, m.headerView(), bordered, drawer, m.footerView(),
-			))
-		case modeComent:
-			drawer := tableStyle.Render(drawerTitle + "\n" + m.commentInput.View())
-			main = appstyle.Render(lipgloss.JoinVertical(
-				lipgloss.Left, m.headerView(), bordered, drawer, m.footerView(),
-			))
-		}
-	} else {
-		main = appstyle.Render(lipgloss.JoinVertical(
-			lipgloss.Left, m.headerView(), bordered, m.footerView(),
-		))
-	}
-
-	// 2) If a dialog is showing, draw the overlay + dialog instead
-	// (simple/robust approach; replaces base while modal is active)
 	if m.activeDialog != nil && m.activeDialog.IsVisible() {
-		// Prefer real dimensions you track (e.g., from WindowSizeMsg)
-		w, h := m.viewport.Width, m.viewport.Height
+		w, h := m.terminalWidth, m.terminalHeight
 		return lipgloss.Place(
-			w, h, // from WindowSizeMsg
+			w, h,
 			lipgloss.Center, lipgloss.Center,
-			m.activeDialog.View(), // modal box only (no centering here)
+			m.activeDialog.View(),
 			lipgloss.WithWhitespaceChars(" "),
-			lipgloss.WithWhitespaceBackground(lipgloss.Color("236")), // solid black backdrop
+			lipgloss.WithWhitespaceBackground(lipgloss.Color("236")),
 		)
-
 	}
 
-	// 3) Otherwise, return the normal UI
-	return main
+	bordered := tableStyle.Render(m.viewport.View())
+	contentW := lipgloss.Width(bordered)
+
+	parts := []string{m.headerView(), bordered}
+	if m.drawerOpen {
+		parts = append(parts, commentArea.Render(m.drawerPort.View()))
+	}
+	parts = append(parts, m.footerView(contentW)) // always
+	return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, parts...))
 }
 
 func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {

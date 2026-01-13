@@ -24,6 +24,9 @@ type Keymap struct {
 	SaveToFile    key.Binding
 	ExportToFile  key.Binding
 	CopyRow       key.Binding
+	JumpToStart   key.Binding
+	JumpToEnd     key.Binding
+	JumpToLineNo  key.Binding
 }
 
 var Keys = Keymap{
@@ -103,6 +106,18 @@ var Keys = Keymap{
 		key.WithKeys("ctrl+c"),
 		key.WithHelp("ctrl+c", "Copy row to clipboard"),
 	),
+	JumpToStart: key.NewBinding(
+		key.WithKeys("g", "home"),
+		key.WithHelp("g/home", "Jump to start"),
+	),
+	JumpToEnd: key.NewBinding(
+		key.WithKeys("G", "end"),
+		key.WithHelp("G/end", "Jump to end"),
+	),
+	JumpToLineNo: key.NewBinding(
+		key.WithKeys(":"),
+		key.WithHelp(":", "Jump To line number"),
+	),
 }
 
 func (k Keymap) Legend() []key.Binding {
@@ -123,5 +138,8 @@ func (k Keymap) Legend() []key.Binding {
 		k.SaveToFile,
 		k.RowUp,
 		k.RowDown,
+		k.JumpToStart,
+		k.JumpToEnd,
+		k.JumpToLineNo,
 	}
 }
