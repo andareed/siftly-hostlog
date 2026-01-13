@@ -155,12 +155,13 @@ func initialModelFromCSV(data [][]string) *model {
 	}
 
 	return &model{
-		header: cols,
-		rows:   rows,
-		ui:     uiState{mode: modeView},
-
-		markedRows:  make(map[uint64]MarkColor),
-		commentRows: make(map[uint64]string),
+		data: dataState{
+			header:      cols,
+			rows:        rows,
+			markedRows:  make(map[uint64]MarkColor),
+			commentRows: make(map[uint64]string),
+		},
+		ui: uiState{mode: modeView},
 
 		// the rest is initialized in initUIBits
 	}

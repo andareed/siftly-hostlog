@@ -90,17 +90,13 @@ func (m *model) enterCommand(cmd Command, seed string, showHint bool, refresh bo
 	} else {
 		switch cmd {
 		case CmdFilter:
-			if m.filterRegex != nil {
-				m.ui.command.buf = m.filterRegex.String()
+			if m.data.filterRegex != nil {
+				m.ui.command.buf = m.data.filterRegex.String()
 			} else {
 				m.ui.command.buf = ""
 			}
 		case CmdSearch:
-			if m.searchRegex != nil {
-				m.ui.command.buf = m.searchRegex.String()
-			} else {
-				m.ui.command.buf = ""
-			}
+			m.ui.command.buf = m.ui.searchQuery
 		default:
 			m.ui.command.buf = ""
 		}

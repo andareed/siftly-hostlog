@@ -9,17 +9,17 @@ import (
 )
 
 func (m *model) markCurrent(colour MarkColor) {
-	if (m.cursor) < 0 || m.cursor >= len(m.filteredIndices) {
+	if (m.cursor) < 0 || m.cursor >= len(m.data.filteredIndices) {
 		return // This messed up as the cursor isn't at a point in the viewport
 	}
-	master := m.filteredIndices[m.cursor] // Gets the row
-	id := m.rows[master].id
+	master := m.data.filteredIndices[m.cursor] // Gets the row
+	id := m.data.rows[master].id
 	if colour == MarkNone {
-		delete(m.markedRows, id)
+		delete(m.data.markedRows, id)
 		logging.Infof("Cursor: %d with Stable ID %d has been unmarked", m.cursor, id)
 	} else {
 		logging.Infof("Cursor: %d with Stable ID %d is being marked with color %s", m.cursor, id, colour)
-		m.markedRows[id] = colour
+		m.data.markedRows[id] = colour
 	}
 }
 
@@ -65,10 +65,10 @@ func (m *model) jumpToNextMark() {
 		return
 	}
 
-	for i := m.cursor + 1; i < len(m.filteredIndices); i++ {
-		rowIdx := m.filteredIndices[i]
-		row := m.rows[rowIdx]
-		if _, ok := m.markedRows[row.id]; ok {
+	for i := m.cursor + 1; i < len(m.data.filteredIndices); i++ {
+		rowIdx := m.data.filteredIndices[i]
+		row := m.data.rows[rowIdx]
+		if _, ok := m.data.markedRows[row.id]; ok {
 			logging.Debugf("Next mark found at %d", i)
 			m.cursor = i
 			return
@@ -80,7 +80,7 @@ func (m *model) jumpToNextMark() {
 
 func (m *model) jumpToPreviousMark() {
 	logging.Debug("jumpToPreviousMark called..")
-	n := len(m.filteredIndices)
+	n := len(m.data.filteredIndices)
 	if n == 0 {
 		logging.Debug("filteredIndicies is emtpy")
 	}
@@ -89,9 +89,9 @@ func (m *model) jumpToPreviousMark() {
 	}
 
 	for i := m.cursor - 1; i >= 0; i-- {
-		rowIdx := m.filteredIndices[i]
-		row := m.rows[rowIdx]
-		if _, ok := m.markedRows[row.id]; ok {
+		rowIdx := m.data.filteredIndices[i]
+		row := m.data.rows[rowIdx]
+		if _, ok := m.data.markedRows[row.id]; ok {
 			logging.Debug("Previous mark has been found")
 			m.cursor = i
 			return

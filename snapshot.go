@@ -120,8 +120,8 @@ func ExportModel(m *model, path string) error {
 	defer w.Flush()
 
 	// Build header: original columns + Mark + Comment
-	header := make([]string, 0, len(m.header)+2)
-	for _, col := range m.header {
+	header := make([]string, 0, len(m.data.header)+2)
+	for _, col := range m.data.header {
 		header = append(header, col.Name)
 	}
 	header = append(header, "Mark", "Comment")
@@ -132,10 +132,10 @@ func ExportModel(m *model, path string) error {
 
 	// Decide which indices to export:
 	// if filteredIndices is empty, fall back to all rows.
-	indices := m.filteredIndices
+	indices := m.data.filteredIndices
 	if len(indices) == 0 {
-		indices = make([]int, len(m.rows))
-		for i := range m.rows {
+		indices = make([]int, len(m.data.rows))
+		for i := range m.data.rows {
 			indices[i] = i
 		}
 	}
@@ -143,22 +143,22 @@ func ExportModel(m *model, path string) error {
 	// Export each visible row
 	for _, idx := range indices {
 		// sanity check
-		if idx < 0 || idx >= len(m.rows) {
+		if idx < 0 || idx >= len(m.data.rows) {
 			return fmt.Errorf("filtered index %d out of range", idx)
 		}
-		r := m.rows[idx]
+		r := m.data.rows[idx]
 
 		// row data: original cols
 		out := append([]string(nil), r.cols...)
 
 		// append mark + comment using the row's id
 		mark := ""
-		if c, ok := m.markedRows[r.id]; ok {
+		if c, ok := m.data.markedRows[r.id]; ok {
 			mark = string(c)
 		}
 
 		comment := ""
-		if c, ok := m.commentRows[r.id]; ok {
+		if c, ok := m.data.commentRows[r.id]; ok {
 			comment = c
 		}
 
@@ -182,19 +182,19 @@ func SaveModel(m *model, path string) error {
 	dto := snapshotDTO{
 		Version:  snapshotVersion,
 		Header:   nil, // filled below
-		Rows:     make([]renderedRowDTO, 0, len(m.rows)),
-		Marked:   u64KeyToStringMarkMap(m.markedRows),
-		Comments: u64KeyToStringStringMap(m.commentRows),
+		Rows:     make([]renderedRowDTO, 0, len(m.data.rows)),
+		Marked:   u64KeyToStringMarkMap(m.data.markedRows),
+		Comments: u64KeyToStringStringMap(m.data.commentRows),
 	}
 
 	// Copy header metadata
-	if len(m.header) > 0 {
-		dto.Header = make([]ColumnMeta, len(m.header))
-		copy(dto.Header, m.header)
+	if len(m.data.header) > 0 {
+		dto.Header = make([]ColumnMeta, len(m.data.header))
+		copy(dto.Header, m.data.header)
 	}
 
 	// Copy rows
-	for _, r := range m.rows {
+	for _, r := range m.data.rows {
 		dto.Rows = append(dto.Rows, toDTORow(r))
 	}
 
@@ -220,25 +220,25 @@ func LoadModel(m *model, path string) error {
 	}
 
 	// Restore header
-	m.header = m.header[:0]
+	m.data.header = m.data.header[:0]
 	if len(dto.Header) > 0 {
-		m.header = make([]ColumnMeta, len(dto.Header))
-		copy(m.header, dto.Header)
+		m.data.header = make([]ColumnMeta, len(dto.Header))
+		copy(m.data.header, dto.Header)
 	}
 
 	// Restore rows
-	m.rows = m.rows[:0]
+	m.data.rows = m.data.rows[:0]
 	for _, dr := range dto.Rows {
-		m.rows = append(m.rows, fromDTORow(dr))
+		m.data.rows = append(m.data.rows, fromDTORow(dr))
 	}
 
 	// Restore marks/comments
 	var errMarks, errComments error
-	m.markedRows, errMarks = parseUintKeyMapMark(dto.Marked)
+	m.data.markedRows, errMarks = parseUintKeyMapMark(dto.Marked)
 	if errMarks != nil {
 		return errMarks
 	}
-	m.commentRows, errComments = parseUintKeyMapString(dto.Comments)
+	m.data.commentRows, errComments = parseUintKeyMapString(dto.Comments)
 	if errComments != nil {
 		return errComments
 	}
@@ -250,8 +250,8 @@ func LoadModel(m *model, path string) error {
 func SaveMeta(m *model, path string) error {
 	dto := metaOnlyDTO{
 		Version:  snapshotVersion,
-		Marked:   u64KeyToStringMarkMap(m.markedRows),
-		Comments: u64KeyToStringStringMap(m.commentRows),
+		Marked:   u64KeyToStringMarkMap(m.data.markedRows),
+		Comments: u64KeyToStringStringMap(m.data.commentRows),
 	}
 	data, err := json.MarshalIndent(dto, "", "  ")
 	if err != nil {
@@ -274,15 +274,15 @@ func LoadMeta(m *model, path string) error {
 		return fmt.Errorf("meta version %d not supported (want %d)", dto.Version, snapshotVersion)
 	}
 
-	if m.markedRows == nil {
-		m.markedRows = make(map[uint64]MarkColor)
+	if m.data.markedRows == nil {
+		m.data.markedRows = make(map[uint64]MarkColor)
 	}
-	if m.commentRows == nil {
-		m.commentRows = make(map[uint64]string)
+	if m.data.commentRows == nil {
+		m.data.commentRows = make(map[uint64]string)
 	}
 
-	present := make(map[uint64]struct{}, len(m.rows))
-	for _, r := range m.rows {
+	present := make(map[uint64]struct{}, len(m.data.rows))
+	for _, r := range m.data.rows {
 		present[r.id] = struct{}{}
 	}
 
@@ -292,7 +292,7 @@ func LoadMeta(m *model, path string) error {
 			return err
 		}
 		if _, ok := present[k]; ok {
-			m.markedRows[k] = sanitizeMarkColor(vs)
+			m.data.markedRows[k] = sanitizeMarkColor(vs)
 		}
 	}
 	for ks, vs := range dto.Comments {
@@ -301,7 +301,7 @@ func LoadMeta(m *model, path string) error {
 			return err
 		}
 		if _, ok := present[k]; ok {
-			m.commentRows[k] = vs
+			m.data.commentRows[k] = vs
 		}
 	}
 

@@ -8,4 +8,5 @@ type uiState struct {
 	noticeMsg    string
 	noticeType   string
 	noticeSeq    int
+	searchQuery  string
 }

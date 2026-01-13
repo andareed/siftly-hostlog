@@ -3,14 +3,12 @@ package main
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/andareed/siftly-hostlog/clipboard"
 	"github.com/andareed/siftly-hostlog/dialogs"
 	"github.com/andareed/siftly-hostlog/logging"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -23,27 +21,18 @@ const (
 	modeView mode = iota
 	// modeFilter
 	// modeMarking
-	// modeComment
+	modeComment
 	modeCommand
 )
 
 //TODO Replace the name renderedRow, as these are not rendered anymore
 
 type model struct {
-	header              []ColumnMeta // single row for column titles in headerview
-	rows                []renderedRow
 	viewport            viewport.Model
 	drawerPort          viewport.Model
 	ready               bool
 	cursor              int // index into rows
 	lastVisibleRowCount int
-	markedRows          map[uint64]MarkColor // map row index to color code
-	commentRows         map[uint64]string    // map row index to string to store comments
-	showOnlyMarked      bool
-	filterRegex         *regexp.Regexp
-	searchRegex         *regexp.Regexp
-	filteredIndices     []int // to store the list of indicides that match the current regex
-	commentInput        textarea.Model
 	terminalHeight      int
 	terminalWidth       int
 	pageRowSize         int
@@ -52,17 +41,11 @@ type model struct {
 	InitialPath         string
 	lastExportFileName  string
 	ui                  uiState
+	data                dataState
 }
 
 func (m *model) InitialiseUI() {
-	ca := textarea.New()
-	ca.Placeholder = "Comment:"
-	//ca.Focus()
-	ca.CharLimit = 256
-
-	m.commentInput = ca
-
-	m.showOnlyMarked = false
+	m.data.showOnlyMarked = false
 	m.drawerPort = viewport.New(0, 0)
 	m.ui.drawerHeight = 13 // TODO:should be a better way of calcing this rather than hardcoding
 	m.ui.drawerOpen = false
@@ -203,15 +186,13 @@ func (m *model) recomputeLayout(height int, width int) {
 		m.ui.drawerHeight = drawerContentHeight + 2
 		height -= m.ui.drawerHeight
 		m.drawerPort.Width = width // Minus out the padding.
-		m.commentInput.SetWidth(width)
-		m.commentInput.SetHeight(drawerContentHeight)
 		m.drawerPort.Height = drawerContentHeight
 		m.drawerPort.Width = width
 	}
 	logging.Debugf("Update Received of type Windows Size Message. ViewPort was [%d] and is now getting set to height[%d] width [%d]", m.viewport.Height, height, width)
 	m.viewport.Height = height
 	m.viewport.Width = width
-	m.header = layoutColumns(m.header, width)
+	m.data.header = layoutColumns(m.data.header, width)
 }
 
 func (m *model) refreshView(reason string, withLayout bool) {
@@ -253,6 +234,9 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, Keys.Filter):
 		logging.Infof("Enabling Command: Filtering")
 		cmd = m.enterCommand(CmdFilter, "", true, false)
+	case key.Matches(msg, Keys.Search):
+		logging.Infof("Enabling Command: Search")
+		cmd = m.enterCommand(CmdSearch, "", true, false)
 	case key.Matches(msg, Keys.MarkMode):
 		logging.Infof("Enable COmmand: Marking")
 		cmd = m.enterCommand(CmdMark, "", true, false)
@@ -274,8 +258,8 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, Keys.ShowMarksOnly):
 		// Show Marks only
 		logging.Infof("Toggle for Show Marks Only has been pressed")
-		m.showOnlyMarked = !m.showOnlyMarked
-		cmd = m.startNotice(fmt.Sprintf("'Show Only Marked Rows' toggled {%b}", m.showOnlyMarked), "", noticeDuration)
+		m.data.showOnlyMarked = !m.data.showOnlyMarked
+		cmd = m.startNotice(fmt.Sprintf("'Show Only Marked Rows' toggled {%b}", m.data.showOnlyMarked), "", noticeDuration)
 		m.applyFilter()
 	case key.Matches(msg, Keys.NextMark):
 		// Next mark jump
@@ -284,6 +268,14 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case key.Matches(msg, Keys.PrevMark):
 		logging.Debug("Back once again: jumping to the previous mark")
 		m.jumpToPreviousMark()
+	case key.Matches(msg, Keys.SearchNext):
+		if !m.searchNext() {
+			cmd = m.startNotice("No matches", "warn", noticeDuration)
+		}
+	case key.Matches(msg, Keys.SearchPrev):
+		if !m.searchPrev() {
+			cmd = m.startNotice("No matches", "warn", noticeDuration)
+		}
 		m.ready = true
 	case key.Matches(msg, Keys.ClearFilter):
 		// Clear Filter
@@ -303,8 +295,8 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.refreshView("drawer-toggle", true)
 		didRefresh = true
 	case key.Matches(msg, Keys.RowDown):
-		// log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]\n", m.cursor, len(m.rows), m.drawerOpen)
-		if m.cursor < len(m.rows)-1 {
+		// log.Printf("handleViewModekey: Down or J pressed, moving cursor one position. Cursor [%d] Rows_Total [%d] DrawerOpen[%t]\n", m.cursor, len(m.data.rows), m.ui.drawerOpen)
+		if m.cursor < len(m.data.rows)-1 {
 			m.cursor++
 		}
 	case key.Matches(msg, Keys.RowUp):
@@ -335,8 +327,8 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 }
 
 func (m *model) copyRowToClipboard() tea.Cmd {
-	if m.cursor >= 0 && m.cursor < len(m.filteredIndices) {
-		row := m.rows[m.filteredIndices[m.cursor]]
+	if m.cursor >= 0 && m.cursor < len(m.data.filteredIndices) {
+		row := m.data.rows[m.data.filteredIndices[m.cursor]]
 		text := row.Join("\t") // Tab Delimetered string
 		if err := clipboard.Copy(text); err != nil {
 			return m.startNotice("Error with Clipboard occurred.", "", noticeDuration)
@@ -348,18 +340,18 @@ func (m *model) copyRowToClipboard() tea.Cmd {
 }
 
 func (m *model) pageDown() {
-	if len(m.filteredIndices) == 0 {
+	if len(m.data.filteredIndices) == 0 {
 		return
 	}
-	if m.cursor+m.pageRowSize < len(m.filteredIndices) {
+	if m.cursor+m.pageRowSize < len(m.data.filteredIndices) {
 		m.cursor += m.pageRowSize
 	} else {
-		m.cursor = len(m.filteredIndices) - 1
+		m.cursor = len(m.data.filteredIndices) - 1
 	}
 }
 
 func (m *model) pageUp() {
-	if len(m.filteredIndices) == 0 {
+	if len(m.data.filteredIndices) == 0 {
 		return
 	}
 	m.cursor -= m.pageRowSize
@@ -369,7 +361,7 @@ func (m *model) pageUp() {
 }
 
 func (m *model) clampCursor() {
-	if len(m.filteredIndices) == 0 {
+	if len(m.data.filteredIndices) == 0 {
 		m.cursor = -1
 		return
 	}
@@ -377,18 +369,18 @@ func (m *model) clampCursor() {
 		m.cursor = 0
 		return
 	}
-	if m.cursor >= len(m.filteredIndices) {
-		m.cursor = len(m.filteredIndices) - 1
+	if m.cursor >= len(m.data.filteredIndices) {
+		m.cursor = len(m.data.filteredIndices) - 1
 	}
 }
 
 func (m *model) currentRowHashID() uint64 {
-	if len(m.filteredIndices) == 0 || m.cursor < 0 || m.cursor >= len(m.filteredIndices) {
-		logging.Debugf("currentRowHashID called but no filteredIndices available (cursor=%d, len=%d)", m.cursor, len(m.filteredIndices))
+	if len(m.data.filteredIndices) == 0 || m.cursor < 0 || m.cursor >= len(m.data.filteredIndices) {
+		logging.Debugf("currentRowHashID called but no filteredIndices available (cursor=%d, len=%d)", m.cursor, len(m.data.filteredIndices))
 		return 0 // or some sentinel value
 	}
-	rowIdx := m.filteredIndices[m.cursor]
-	hashId := m.rows[rowIdx].id
+	rowIdx := m.data.filteredIndices[m.cursor]
+	hashId := m.data.rows[rowIdx].id
 	logging.Debugf("currentRowHashID called returning HashID[%d] for cursor[%d] at filteredIndex[%d] which maps to rowIndex[%d]", hashId, m.cursor, rowIdx, rowIdx)
 	return hashId
 }
@@ -401,8 +393,8 @@ func (m *model) jumpToHashID(hashId uint64) {
 	}
 
 	logging.Debugf("jumpToHashID called looking for HashID[%d]", hashId)
-	for i, idx := range m.filteredIndices {
-		if m.rows[idx].id == hashId {
+	for i, idx := range m.data.filteredIndices {
+		if m.data.rows[idx].id == hashId {
 			m.cursor = i
 			logging.Debugf("jumpToHashID: Jumping to index [%d] for hashID[%d]", i, hashId)
 			return
@@ -414,7 +406,7 @@ func (m *model) jumpToHashID(hashId uint64) {
 }
 
 func (m *model) checkViewPortHasData() bool {
-	if len(m.filteredIndices) == 0 {
+	if len(m.data.filteredIndices) == 0 {
 		logging.Debug("filterIndicies is empty")
 		return false
 	}
@@ -428,29 +420,29 @@ func (m *model) applyFilter() {
 	logging.Debugf("applyFilter called")
 	// Remember the Hash of what we have current selected
 
-	currentRowHash := m.currentRowHashID()    // should be called before we reset the filteredIndices
-	m.filteredIndices = m.filteredIndices[:0] // reset slice
+	currentRowHash := m.currentRowHashID()              // should be called before we reset the filteredIndices
+	m.data.filteredIndices = m.data.filteredIndices[:0] // reset slice
 
-	if m.filterRegex == nil && !m.showOnlyMarked {
+	if m.data.filterRegex == nil && !m.data.showOnlyMarked {
 		logging.Debug("applyFilter: No filter text and showOnly marked is false there all indices being added to filteredIncidices")
 		// Maybe used clamp?
-		for i := range m.rows {
-			m.filteredIndices = append(m.filteredIndices, i)
+		for i := range m.data.rows {
+			m.data.filteredIndices = append(m.data.filteredIndices, i)
 		}
-		if len(m.filteredIndices) == 0 {
+		if len(m.data.filteredIndices) == 0 {
 			m.cursor = 0
 		}
 		m.jumpToHashID(currentRowHash)
 		return
 	}
 
-	for i, row := range m.rows {
+	for i, row := range m.data.rows {
 		if m.includeRow(row) {
-			m.filteredIndices = append(m.filteredIndices, i)
+			m.data.filteredIndices = append(m.data.filteredIndices, i)
 		}
 	}
 
-	if len(m.filteredIndices) == 0 {
+	if len(m.data.filteredIndices) == 0 {
 		// No matches found prevent index panics
 		m.cursor = -1
 	}

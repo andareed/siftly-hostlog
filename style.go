@@ -36,6 +36,10 @@ var (
 			Border(lipgloss.NormalBorder()).
 			BorderForeground(lipgloss.Color("245")). // subtle gray
 			Padding(0, 0).BorderLeft(true)
+
+	searchHighlight = lipgloss.NewStyle().
+			Background(lipgloss.Color("#f5c542")).
+			Foreground(lipgloss.Color("#000000"))
 )
 
 // func (r *renderedRow) Height() int {

@@ -11,7 +11,10 @@ type Keymap struct {
 	NextMark      key.Binding
 	PrevMark      key.Binding
 	Filter        key.Binding
+	Search        key.Binding
 	ClearFilter   key.Binding
+	SearchNext    key.Binding
+	SearchPrev    key.Binding
 	ShowComment   key.Binding
 	EditComment   key.Binding
 	PageUp        key.Binding
@@ -62,9 +65,21 @@ var Keys = Keymap{
 		key.WithKeys("f"),
 		key.WithHelp("f", "Filter by Regex"),
 	),
+	Search: key.NewBinding(
+		key.WithKeys("/"),
+		key.WithHelp("/", "Search"),
+	),
 	ClearFilter: key.NewBinding(
 		key.WithKeys("F"),
 		key.WithHelp("F", "Clear current filter"),
+	),
+	SearchNext: key.NewBinding(
+		key.WithKeys("]", "ctrl+n"),
+		key.WithHelp("]/ctrl+n", "Next search"),
+	),
+	SearchPrev: key.NewBinding(
+		key.WithKeys("[", "ctrl+p"),
+		key.WithHelp("[/ctrl+p", "Prev search"),
 	),
 	PageUp: key.NewBinding(
 		key.WithKeys("u", "pgup"),
@@ -128,7 +143,10 @@ func (k Keymap) Legend() []key.Binding {
 		k.NextMark,
 		k.PrevMark,
 		k.Filter,
+		k.Search,
 		k.ClearFilter,
+		k.SearchNext,
+		k.SearchPrev,
 		k.EditComment,
 		k.ShowComment,
 		k.PageUp,

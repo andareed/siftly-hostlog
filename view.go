@@ -11,13 +11,13 @@ import (
 
 func (m *model) headerView() string {
 	// Width for row numbers + pill + comment markers
-	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) +
+	markerWidth := len(fmt.Sprintf("%d", len(m.data.rows))) +
 		utf8.RuneCountInString(pillMarker) +
 		utf8.RuneCountInString(commentMarker)
 
 	var cells []string
 
-	for _, col := range m.header {
+	for _, col := range m.data.header {
 		if !col.Visible || col.Width <= 0 {
 			continue
 		}
@@ -69,14 +69,14 @@ func (m *model) footerView(width int) string {
 		ModeInput:     modeInput,
 		FileName:      defaultSaveName(*m),
 		FilterLabel:   "None",
-		MarksOnly:     m.showOnlyMarked,
+		MarksOnly:     m.data.showOnlyMarked,
 		Row:           m.cursor + 1,
-		TotalRows:     len(m.filteredIndices),
+		TotalRows:     len(m.data.filteredIndices),
 		StatusMessage: "",
-		Legend:        "(? help · f filter · c comment)",
+		Legend:        "(? help · f filter · / search · c comment)",
 	}
-	if m.filterRegex != nil && m.filterRegex.String() != "" {
-		st.FilterLabel = m.filterRegex.String()
+	if m.data.filterRegex != nil && m.data.filterRegex.String() != "" {
+		st.FilterLabel = m.data.filterRegex.String()
 	}
 	if m.ui.noticeMsg != "" {
 		st.StatusMessage = noticeText(m.ui.noticeMsg, m.ui.noticeType)
@@ -113,7 +113,7 @@ func (m *model) View() string {
 }
 
 func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
-	if filteredIdx < 0 || filteredIdx >= len(m.filteredIndices) {
+	if filteredIdx < 0 || filteredIdx >= len(m.data.filteredIndices) {
 		return "", 0, false
 	}
 
@@ -124,14 +124,14 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 		rowFgStyle = rowSelectedTextstyle
 	}
 
-	rowIdx := m.filteredIndices[filteredIdx]
-	row := m.rows[rowIdx]
+	rowIdx := m.data.filteredIndices[filteredIdx]
+	row := m.data.rows[rowIdx]
 
-	_, commentPresent := m.commentRows[row.id]
+	_, commentPresent := m.data.commentRows[row.id]
 	standardMarker := m.getRowMarker(row.id)
 
 	// figure out how wide the row number gutter needs to be
-	markerWidth := len(fmt.Sprintf("%d", len(m.rows))) + utf8.RuneCountInString(commentMarker)
+	markerWidth := len(fmt.Sprintf("%d", len(m.data.rows))) + utf8.RuneCountInString(commentMarker)
 
 	// Standard mark seems to reset any bg colour attempts to need to render anything preceding it
 	firstLineMarker := standardMarker + rowBgStyle.Render(fmt.Sprintf("%*d", markerWidth, row.originalIndex))
@@ -141,7 +141,15 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 		firstLineMarker = standardMarker + rowBgStyle.Render(commentMarker+fmt.Sprintf("%*d", markerWidth-utf8.RuneCountInString(commentMarker), row.originalIndex))
 	}
 
-	content := row.Render(cellStyle, m.header)
+	contentRow := row
+	if m.ui.searchQuery != "" {
+		cols := make([]string, len(row.cols))
+		for i, col := range row.cols {
+			cols[i] = highlightMatches(col, m.ui.searchQuery)
+		}
+		contentRow.cols = cols
+	}
+	content := contentRow.Render(cellStyle, m.data.header)
 	lines := strings.Split(content, "\n")
 
 	for i := range lines {
@@ -157,8 +165,32 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 	return rendered, row.height, true
 }
 
+func highlightMatches(text string, query string) string {
+	q := strings.TrimSpace(query)
+	if q == "" || text == "" {
+		return text
+	}
+	lowerText := strings.ToLower(text)
+	lowerQuery := strings.ToLower(q)
+	var b strings.Builder
+	start := 0
+	for {
+		idx := strings.Index(lowerText[start:], lowerQuery)
+		if idx == -1 {
+			b.WriteString(text[start:])
+			break
+		}
+		idx += start
+		b.WriteString(text[start:idx])
+		match := text[idx : idx+len(lowerQuery)]
+		b.WriteString(searchHighlight.Render(match))
+		start = idx + len(lowerQuery)
+	}
+	return b.String()
+}
+
 func (m *model) getRowMarker(index uint64) string {
-	switch m.markedRows[index] {
+	switch m.data.markedRows[index] {
 	case MarkRed:
 		return redMarker.Render(pillMarker)
 	case MarkGreen:
@@ -178,13 +210,13 @@ func (m *model) renderViewport() string {
 
 	cursor := m.cursor
 
-	if len(m.filteredIndices) == 0 && cursor < 0 {
-		logging.Debugf("renderTable: Returning blank filteredIndices Lenght[%d] cursor[%d]", len(m.filteredIndices), cursor)
+	if len(m.data.filteredIndices) == 0 && cursor < 0 {
+		logging.Debugf("renderTable: Returning blank filteredIndices Lenght[%d] cursor[%d]", len(m.data.filteredIndices), cursor)
 
 		return ""
 	}
 	//TODO: Defect here as we should be using the row count not the display index to maintain between a filter and non-filtered list
-	if len(m.filteredIndices) < cursor {
+	if len(m.data.filteredIndices) < cursor {
 		m.cursor = 0
 		cursor = 0
 	}
@@ -217,7 +249,7 @@ func (m *model) computeVisibleRows(cursor int, viewportHeight int) ([]string, in
 	var below []string
 
 	nextAbove := true
-	for heightFree > 0 && (upIndex >= 0 || downIndex < len(m.filteredIndices)) {
+	for heightFree > 0 && (upIndex >= 0 || downIndex < len(m.data.filteredIndices)) {
 		if nextAbove {
 			if upIndex >= 0 {
 				rendered, height, ok := m.renderRowAt(upIndex)
@@ -230,7 +262,7 @@ func (m *model) computeVisibleRows(cursor int, viewportHeight int) ([]string, in
 					continue
 				}
 			}
-			if downIndex < len(m.filteredIndices) {
+			if downIndex < len(m.data.filteredIndices) {
 				rendered, height, ok := m.renderRowAt(downIndex)
 				if ok && height <= heightFree {
 					below = append(below, rendered)
@@ -242,7 +274,7 @@ func (m *model) computeVisibleRows(cursor int, viewportHeight int) ([]string, in
 				}
 			}
 		} else {
-			if downIndex < len(m.filteredIndices) {
+			if downIndex < len(m.data.filteredIndices) {
 				rendered, height, ok := m.renderRowAt(downIndex)
 				if ok && height <= heightFree {
 					below = append(below, rendered)

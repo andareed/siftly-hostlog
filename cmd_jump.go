@@ -23,7 +23,7 @@ func (m *model) jumpToEnd() {
 	}
 	// As filteredIndices gets fully populated with all rows if there is no
 	// filter. We are safe to say this is the last one, regardless.
-	m.cursor = len(m.filteredIndices) - 1
+	m.cursor = len(m.data.filteredIndices) - 1
 }
 
 func (m *model) jumpToLine(lineNo int) tea.Cmd {
@@ -35,10 +35,10 @@ func (m *model) jumpToLine(lineNo int) tea.Cmd {
 		return m.startNotice(fmt.Sprintf("Line %d out of bounds", lineNo), "warn", noticeDuration)
 	}
 	target := lineNo - 1
-	if target >= len(m.rows) {
+	if target >= len(m.data.rows) {
 		return m.startNotice(fmt.Sprintf("Line %d out of bounds", lineNo), "warn", noticeDuration)
 	}
-	for i, idx := range m.filteredIndices {
+	for i, idx := range m.data.filteredIndices {
 		if idx == target {
 			m.cursor = i
 			return nil

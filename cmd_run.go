@@ -15,8 +15,11 @@ func (m *model) runCommand() tea.Cmd {
 		return m.startNotice("Invalid line number", "warn", noticeDuration)
 
 	case CmdSearch:
-		m.searchOnce(m.ui.command.buf)
-		return nil
+		m.setSearchQuery(m.ui.command.buf)
+		if m.searchNext() {
+			return nil
+		}
+		return m.startNotice("No matches", "warn", noticeDuration)
 
 	case CmdFilter:
 		m.setFilterPattern(m.ui.command.buf)
