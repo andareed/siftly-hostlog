@@ -7,6 +7,7 @@ import (
 
 	"github.com/andareed/siftly-hostlog/logging"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/termenv"
 )
 
 func (m *model) headerView() string {
@@ -73,7 +74,7 @@ func (m *model) footerView(width int) string {
 		Row:           m.cursor + 1,
 		TotalRows:     len(m.data.filteredIndices),
 		StatusMessage: "",
-		Legend:        "(? help · f filter · / search · c comment)",
+		Legend:        "(? help · f filter · / search · c edit comment · v view comments)",
 	}
 	if m.data.filterRegex != nil && m.data.filterRegex.String() != "" {
 		st.FilterLabel = m.data.filterRegex.String()
@@ -81,6 +82,13 @@ func (m *model) footerView(width int) string {
 	if m.ui.noticeMsg != "" {
 		st.StatusMessage = noticeText(m.ui.noticeMsg, m.ui.noticeType)
 	}
+
+	debug := fmt.Sprintf(" dbg term=%dx%d vp=%dx%d cur=%d vis=%d-%d page=%d ch=%d hf=%d abv=%d",
+		m.terminalWidth, m.terminalHeight, m.viewport.Width, m.viewport.Height,
+		m.cursor, m.ui.visibleStart, m.ui.visibleEnd, m.pageRowSize,
+		m.ui.debugCursorHeight, m.ui.debugHeightFree, m.ui.debugDesiredAboveHeight,
+	)
+	st.Legend = st.Legend + " |" + debug
 
 	return renderFooter(width, st, styles)
 }
@@ -117,15 +125,18 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 		return "", 0, false
 	}
 
+	selected := filteredIdx == m.cursor
 	rowBgStyle := rowStyle
-	rowFgStyle := rowTextStyle
-	if filteredIdx == m.cursor {
+	rowPrefix := bgSeq(lipgloss.Color("")) + fgSeq(lipgloss.Color(rowTextFGColor))
+	if selected {
 		rowBgStyle = rowSelectedStyle
-		rowFgStyle = rowSelectedTextstyle
+		rowPrefix = bgSeq(lipgloss.Color(rowSelectedBGColor)) + fgSeq(lipgloss.Color(rowSelectedTextFGColor))
 	}
+	rowSuffix := termenv.CSI + "0m"
 
 	rowIdx := m.data.filteredIndices[filteredIdx]
-	row := m.data.rows[rowIdx]
+	rowPtr := &m.data.rows[rowIdx]
+	row := *rowPtr
 
 	_, commentPresent := m.data.commentRows[row.id]
 	standardMarker := m.getRowMarker(row.id)
@@ -150,11 +161,16 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 		contentRow.cols = cols
 	}
 	content := contentRow.Render(cellStyle, m.data.header)
+	rowPtr.height = contentRow.height
 	lines := strings.Split(content, "\n")
 
 	for i := range lines {
 		left := additionalLineMarker
-		right := rowBgStyle.Render(rowFgStyle.Render(lines[i]))
+		line := lines[i]
+		if m.ui.searchQuery != "" {
+			line = restoreRowStyleAfterReset(line, rowPrefix)
+		}
+		right := rowPrefix + line + rowSuffix
 		if i == 0 { // first line
 			left = firstLineMarker
 		}
@@ -162,7 +178,7 @@ func (m *model) renderRowAt(filteredIdx int) (string, int, bool) {
 	}
 
 	rendered := strings.Join(lines, "\n")
-	return rendered, row.height, true
+	return rendered, contentRow.height, true
 }
 
 func highlightMatches(text string, query string) string {
@@ -187,6 +203,41 @@ func highlightMatches(text string, query string) string {
 		start = idx + len(lowerQuery)
 	}
 	return b.String()
+}
+
+func restoreRowStyleAfterReset(s string, rowPrefix string) string {
+	if rowPrefix == "" {
+		return s
+	}
+	reset := termenv.CSI + "0m"
+	if !strings.Contains(s, reset) {
+		return s
+	}
+	return strings.ReplaceAll(s, reset, reset+rowPrefix)
+}
+
+func fgSeq(c lipgloss.Color) string {
+	return colorSeq(c, false)
+}
+
+func bgSeq(c lipgloss.Color) string {
+	return colorSeq(c, true)
+}
+
+func colorSeq(c lipgloss.Color, bg bool) string {
+	value := string(c)
+	if value == "" {
+		if bg {
+			return termenv.CSI + "49m"
+		}
+		return termenv.CSI + "39m"
+	}
+	profile := lipgloss.ColorProfile()
+	tc := profile.Color(value)
+	if tc == nil {
+		return ""
+	}
+	return termenv.CSI + tc.Sequence(bg) + "m"
 }
 
 func (m *model) getRowMarker(index uint64) string {
@@ -220,9 +271,11 @@ func (m *model) renderViewport() string {
 		m.cursor = 0
 		cursor = 0
 	}
-	renderedRows, rowCount := m.computeVisibleRows(cursor, viewportHeight)
+	renderedRows, startIdx, endIdx := m.computeVisibleRows(cursor, viewportHeight)
+	m.ui.visibleStart = startIdx
+	m.ui.visibleEnd = endIdx
 	// Metrics
-	m.pageRowSize = rowCount
+	m.pageRowSize = len(renderedRows)
 	m.lastVisibleRowCount = len(renderedRows)
 
 	// Combine rendered rows into a string with proper vertical order
@@ -234,67 +287,55 @@ func (m *model) renderViewport() string {
 	return b.String()
 }
 
-func (m *model) computeVisibleRows(cursor int, viewportHeight int) ([]string, int) {
+func (m *model) computeVisibleRows(cursor int, viewportHeight int) ([]string, int, int) {
 	cursorRenderedRow, cursorHeight, ok := m.renderRowAt(cursor)
 	if !ok {
-		return nil, 0
+		return nil, 0, 0
 	}
 
 	heightFree := viewportHeight - cursorHeight
+	desiredAboveHeight := heightFree / 2
+	if desiredAboveHeight < 0 {
+		desiredAboveHeight = 0
+	}
+	m.ui.debugCursorHeight = cursorHeight
+	m.ui.debugHeightFree = heightFree
+	m.ui.debugDesiredAboveHeight = desiredAboveHeight
 	upIndex := cursor - 1
 	downIndex := cursor + 1
-	rowCount := 0
 
 	var above []string
 	var below []string
 
-	nextAbove := true
+	aboveHeight := 0
 	for heightFree > 0 && (upIndex >= 0 || downIndex < len(m.data.filteredIndices)) {
-		if nextAbove {
-			if upIndex >= 0 {
-				rendered, height, ok := m.renderRowAt(upIndex)
-				if ok && height <= heightFree {
-					above = append(above, rendered)
-					heightFree -= height
-					upIndex--
-					rowCount++
-					nextAbove = false
-					continue
-				}
+		if upIndex >= 0 && aboveHeight < desiredAboveHeight {
+			rendered, height, ok := m.renderRowAt(upIndex)
+			if ok && height <= heightFree {
+				above = append(above, rendered)
+				heightFree -= height
+				aboveHeight += height
+				upIndex--
+				continue
 			}
-			if downIndex < len(m.data.filteredIndices) {
-				rendered, height, ok := m.renderRowAt(downIndex)
-				if ok && height <= heightFree {
-					below = append(below, rendered)
-					heightFree -= height
-					downIndex++
-					rowCount++
-					nextAbove = true
-					continue
-				}
+		}
+		if downIndex < len(m.data.filteredIndices) {
+			rendered, height, ok := m.renderRowAt(downIndex)
+			if ok && height <= heightFree {
+				below = append(below, rendered)
+				heightFree -= height
+				downIndex++
+				continue
 			}
-		} else {
-			if downIndex < len(m.data.filteredIndices) {
-				rendered, height, ok := m.renderRowAt(downIndex)
-				if ok && height <= heightFree {
-					below = append(below, rendered)
-					heightFree -= height
-					downIndex++
-					rowCount++
-					nextAbove = true
-					continue
-				}
-			}
-			if upIndex >= 0 {
-				rendered, height, ok := m.renderRowAt(upIndex)
-				if ok && height <= heightFree {
-					above = append(above, rendered)
-					heightFree -= height
-					upIndex--
-					rowCount++
-					nextAbove = false
-					continue
-				}
+		}
+		if upIndex >= 0 {
+			rendered, height, ok := m.renderRowAt(upIndex)
+			if ok && height <= heightFree {
+				above = append(above, rendered)
+				heightFree -= height
+				aboveHeight += height
+				upIndex--
+				continue
 			}
 		}
 		break
@@ -307,5 +348,7 @@ func (m *model) computeVisibleRows(cursor int, viewportHeight int) ([]string, in
 	renderedRows = append(renderedRows, cursorRenderedRow)
 	renderedRows = append(renderedRows, below...)
 
-	return renderedRows, rowCount
+	startIdx := cursor - len(above)
+	endIdx := cursor + len(below)
+	return renderedRows, startIdx, endIdx
 }

@@ -58,7 +58,7 @@ func renderFooter(width int, st footerState, styles footerStyles) string {
 		st.FilterLabel = "None"
 	}
 	if st.Legend == "" {
-		st.Legend = "(? help · f filter · c comment)"
+		st.Legend = "(? help · f filter · c edit · v view)"
 	}
 	if st.Row < 0 {
 		st.Row = 0

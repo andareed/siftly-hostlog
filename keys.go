@@ -54,12 +54,12 @@ var Keys = Keymap{
 		key.WithHelp("N", "Jump to previous mark"),
 	),
 	ShowComment: key.NewBinding(
-		key.WithKeys("c"),
-		key.WithHelp("c", "Show/Not Show Comments"),
+		key.WithKeys("v"),
+		key.WithHelp("v", "View comments"),
 	),
 	EditComment: key.NewBinding(
-		key.WithKeys("e"),
-		key.WithHelp("e", "Edit comment on selected row"),
+		key.WithKeys("c"),
+		key.WithHelp("c", "Edit comment on selected row"),
 	),
 	Filter: key.NewBinding(
 		key.WithKeys("f"),

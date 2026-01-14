@@ -2,6 +2,14 @@ package main
 
 import "github.com/charmbracelet/lipgloss"
 
+const (
+	rowTextFGColor         = "#c0c0c0"
+	rowSelectedTextFGColor = "#e0e0e0"
+	rowSelectedBGColor     = "#3a3a3a"
+	searchHighlightBGColor = "#f5c542"
+	searchHighlightFGColor = "#000000"
+)
+
 var (
 	// Styles
 	appstyle = lipgloss.NewStyle().Margin(1, 2)
@@ -11,11 +19,11 @@ var (
 		Right: " ",
 	}).BorderLeft(true).BorderRight(true)
 	rowStyle         = lipgloss.NewStyle()
-	rowSelectedStyle = lipgloss.NewStyle().Background(lipgloss.Color("#3a3a3a"))
+	rowSelectedStyle = lipgloss.NewStyle().Background(lipgloss.Color(rowSelectedBGColor))
 
 	// Row Text (no background)
-	rowTextStyle         = lipgloss.NewStyle().Foreground(lipgloss.Color("#c0c0c0"))
-	rowSelectedTextstyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#e0e0e0"))
+	rowTextStyle         = lipgloss.NewStyle().Foreground(lipgloss.Color(rowTextFGColor))
+	rowSelectedTextstyle = lipgloss.NewStyle().Foreground(lipgloss.Color(rowSelectedTextFGColor))
 
 	// selectedStyle  = lipgloss.NewStyle().Background(lipgloss.Color("236")).Foreground(lipgloss.Color("254")).Padding(0, 0)
 	// markedRedStyle = lipgloss.NewStyle().Background(lipgloss.Color("124")).Foreground(lipgloss.Color("254")).Padding(0, 1)
@@ -38,8 +46,8 @@ var (
 			Padding(0, 0).BorderLeft(true)
 
 	searchHighlight = lipgloss.NewStyle().
-			Background(lipgloss.Color("#f5c542")).
-			Foreground(lipgloss.Color("#000000"))
+			Background(lipgloss.Color(searchHighlightBGColor)).
+			Foreground(lipgloss.Color(searchHighlightFGColor))
 )
 
 // func (r *renderedRow) Height() int {
