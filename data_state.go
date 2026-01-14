@@ -1,6 +1,15 @@
 package main
 
-import "regexp"
+import (
+	"regexp"
+	"time"
+)
+
+type TimeWindow struct {
+	Enabled bool
+	Start   time.Time
+	End     time.Time
+}
 
 type dataState struct {
 	header          []ColumnMeta // single row for column titles in headerview
@@ -10,4 +19,11 @@ type dataState struct {
 	showOnlyMarked  bool
 	filterRegex     *regexp.Regexp
 	filteredIndices []int // to store the list of indicides that match the current regex
+	timeWindow      TimeWindow
+	timeMin         time.Time
+	timeMax         time.Time
+	hasTimeBounds   bool
+	timeColumnIndex int
+	rowTimes        []time.Time
+	rowHasTimes     []bool
 }

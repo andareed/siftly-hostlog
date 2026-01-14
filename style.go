@@ -45,6 +45,11 @@ var (
 			BorderForeground(lipgloss.Color("245")). // subtle gray
 			Padding(0, 0).BorderLeft(true)
 
+	timeWindowArea = lipgloss.NewStyle().
+			Border(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("245")).
+			Padding(0, 0).BorderLeft(true)
+
 	searchHighlight = lipgloss.NewStyle().
 			Background(lipgloss.Color(searchHighlightBGColor)).
 			Foreground(lipgloss.Color(searchHighlightFGColor))

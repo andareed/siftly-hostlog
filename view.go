@@ -74,13 +74,16 @@ func (m *model) footerView(width int) string {
 		Row:           m.cursor + 1,
 		TotalRows:     len(m.data.filteredIndices),
 		StatusMessage: "",
-		Legend:        "(? help · f filter · / search · c edit comment · v view comments)",
+		Legend:        "(? help · f filter · / search · t time window · c edit comment · v view comments)",
 	}
 	if m.data.filterRegex != nil && m.data.filterRegex.String() != "" {
 		st.FilterLabel = m.data.filterRegex.String()
 	}
 	if m.ui.noticeMsg != "" {
 		st.StatusMessage = noticeText(m.ui.noticeMsg, m.ui.noticeType)
+	}
+	if st.StatusMessage == "" {
+		st.StatusMessage = m.timeWindowStatusLabel()
 	}
 
 	debug := fmt.Sprintf(" dbg term=%dx%d vp=%dx%d cur=%d vis=%d-%d page=%d ch=%d hf=%d abv=%d",
@@ -115,6 +118,9 @@ func (m *model) View() string {
 	parts := []string{m.headerView(), bordered}
 	if m.ui.drawerOpen {
 		parts = append(parts, commentArea.Render(m.drawerPort.View()))
+	}
+	if m.ui.timeWindow.open {
+		parts = append(parts, m.timeWindowDrawerView(contentW))
 	}
 	parts = append(parts, m.footerView(contentW)) // always
 	return appstyle.Render(lipgloss.JoinVertical(lipgloss.Left, parts...))

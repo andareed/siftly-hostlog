@@ -23,6 +23,7 @@ const (
 	// modeMarking
 	modeComment
 	modeCommand
+	modeTimeWindow
 )
 
 //TODO Replace the name renderedRow, as these are not rendered anymore
@@ -50,6 +51,12 @@ func (m *model) InitialiseUI() {
 	m.ui.drawerHeight = 13 // TODO:should be a better way of calcing this rather than hardcoding
 	m.ui.drawerOpen = false
 	m.ui.mode = modeView
+	m.ui.timeWindow = timeWindowUI{
+		startInput: initTimeWindowInput(),
+		endInput:   initTimeWindowInput(),
+		focus:      timeWindowFocusStart,
+	}
+	m.computeTimeBounds()
 }
 
 func (m *model) Init() tea.Cmd {
@@ -189,6 +196,9 @@ func (m *model) recomputeLayout(height int, width int) {
 		m.drawerPort.Height = drawerContentHeight
 		m.drawerPort.Width = width
 	}
+	if m.ui.timeWindow.open {
+		height -= timeWindowDrawerHeight
+	}
 	logging.Debugf("Update Received of type Windows Size Message. ViewPort was [%d] and is now getting set to height[%d] width [%d]", m.viewport.Height, height, width)
 	m.viewport.Height = height
 	m.viewport.Width = width
@@ -217,6 +227,8 @@ func (m *model) handleKeyMsg(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m.handleViewModeKey(msg)
 	case modeCommand:
 		return m.handleCommandKey(msg)
+	case modeTimeWindow:
+		return m.handleTimeWindowKey(msg)
 	}
 
 	return m, nil
@@ -228,6 +240,9 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	switch {
 	// Migrating to a command / input method
+	case key.Matches(msg, Keys.TimeWindow):
+		m.openTimeWindowDrawer()
+		didRefresh = true
 	case key.Matches(msg, Keys.JumpToLineNo):
 		logging.Infof("Enabling Command: Jumping to specific line number if it exists")
 		cmd = m.enterCommand(CmdJump, "", true, false)
@@ -423,7 +438,7 @@ func (m *model) applyFilter() {
 	currentRowHash := m.currentRowHashID()              // should be called before we reset the filteredIndices
 	m.data.filteredIndices = m.data.filteredIndices[:0] // reset slice
 
-	if m.data.filterRegex == nil && !m.data.showOnlyMarked {
+	if m.data.filterRegex == nil && !m.data.showOnlyMarked && !m.data.timeWindow.Enabled {
 		logging.Debug("applyFilter: No filter text and showOnly marked is false there all indices being added to filteredIncidices")
 		// Maybe used clamp?
 		for i := range m.data.rows {
@@ -437,7 +452,7 @@ func (m *model) applyFilter() {
 	}
 
 	for i, row := range m.data.rows {
-		if m.includeRow(row) {
+		if m.includeRow(row, i) {
 			m.data.filteredIndices = append(m.data.filteredIndices, i)
 		}
 	}

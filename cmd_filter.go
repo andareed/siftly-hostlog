@@ -23,9 +23,22 @@ func (m *model) setFilterPattern(pattern string) error {
 
 // region Filtering
 
-func (m *model) includeRow(row renderedRow) bool {
+func (m *model) includeRow(row renderedRow, rowIndex int) bool {
 	if m.data.showOnlyMarked {
 		if _, ok := m.data.markedRows[row.id]; !ok {
+			return false
+		}
+	}
+
+	if m.data.timeWindow.Enabled {
+		if rowIndex < 0 || rowIndex >= len(m.data.rowHasTimes) {
+			return false
+		}
+		if !m.data.rowHasTimes[rowIndex] {
+			return false
+		}
+		ts := m.data.rowTimes[rowIndex]
+		if ts.Before(m.data.timeWindow.Start) || ts.After(m.data.timeWindow.End) {
 			return false
 		}
 	}

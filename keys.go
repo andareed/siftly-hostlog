@@ -30,6 +30,7 @@ type Keymap struct {
 	JumpToStart   key.Binding
 	JumpToEnd     key.Binding
 	JumpToLineNo  key.Binding
+	TimeWindow    key.Binding
 }
 
 var Keys = Keymap{
@@ -133,6 +134,10 @@ var Keys = Keymap{
 		key.WithKeys(":"),
 		key.WithHelp(":", "Jump To line number"),
 	),
+	TimeWindow: key.NewBinding(
+		key.WithKeys("t"),
+		key.WithHelp("t", "Time window"),
+	),
 }
 
 func (k Keymap) Legend() []key.Binding {
@@ -159,5 +164,6 @@ func (k Keymap) Legend() []key.Binding {
 		k.JumpToStart,
 		k.JumpToEnd,
 		k.JumpToLineNo,
+		k.TimeWindow,
 	}
 }

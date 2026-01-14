@@ -14,4 +14,5 @@ type uiState struct {
 	debugCursorHeight       int
 	debugHeightFree         int
 	debugDesiredAboveHeight int
+	timeWindow              timeWindowUI
 }
