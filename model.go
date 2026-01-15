@@ -356,10 +356,10 @@ func (m *model) copyRowToClipboard() tea.Cmd {
 		row := m.data.rows[m.data.filteredIndices[m.cursor]]
 		text := row.Join("\t") // Tab Delimetered string
 		if err := clipboard.Copy(text); err != nil {
-			return m.startNotice("Error with Clipboard occurred.", "", noticeDuration)
-		} else {
-			return m.startNotice("Copied Row COntent to Clipboard", "", noticeDuration)
+			logging.Errorf("Clipboard copy failed: %v", err)
+			return m.startNotice(fmt.Sprintf("Clipboard error: %v", err), "warn", noticeDuration)
 		}
+		return m.startNotice("Copied row to clipboard", "", noticeDuration)
 	}
 	return nil
 }
