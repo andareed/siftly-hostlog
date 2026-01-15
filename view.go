@@ -86,12 +86,14 @@ func (m *model) footerView(width int) string {
 		st.StatusMessage = m.timeWindowStatusLabel()
 	}
 
-	debug := fmt.Sprintf(" dbg term=%dx%d vp=%dx%d cur=%d vis=%d-%d page=%d ch=%d hf=%d abv=%d",
-		m.terminalWidth, m.terminalHeight, m.viewport.Width, m.viewport.Height,
-		m.cursor, m.ui.visibleStart, m.ui.visibleEnd, m.pageRowSize,
-		m.ui.debugCursorHeight, m.ui.debugHeightFree, m.ui.debugDesiredAboveHeight,
-	)
-	st.Legend = st.Legend + " |" + debug
+	if logging.IsDebugMode() {
+		debug := fmt.Sprintf(" dbg term=%dx%d vp=%dx%d cur=%d vis=%d-%d page=%d ch=%d hf=%d abv=%d",
+			m.terminalWidth, m.terminalHeight, m.viewport.Width, m.viewport.Height,
+			m.cursor, m.ui.visibleStart, m.ui.visibleEnd, m.pageRowSize,
+			m.ui.debugCursorHeight, m.ui.debugHeightFree, m.ui.debugDesiredAboveHeight,
+		)
+		st.Legend = st.Legend + " |" + debug
+	}
 
 	return renderFooter(width, st, styles)
 }

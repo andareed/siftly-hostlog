@@ -15,6 +15,7 @@ import (
 // If filename is set, logs go to that file and Bubble Tea logs are enabled too.
 func SetupLogging(filename string) (cleanup func(), err error) {
 	SetLevelFromEnv()
+	debugFileEnabled = filename != ""
 	if filename == "" {
 		log.SetFlags(log.LstdFlags | log.Lshortfile)
 		log.SetOutput(io.Discard) // <- key change
@@ -56,11 +57,16 @@ const (
 )
 
 var currentLevel = LevelInfo
+var debugFileEnabled bool
 
 func SetLevelFromEnv() {
 	if v := strings.TrimSpace(os.Getenv("SIFTLY_LOG_LEVEL")); v != "" {
 		currentLevel = levelFromString(v)
 	}
+}
+
+func IsDebugMode() bool {
+	return debugFileEnabled || currentLevel == LevelDebug
 }
 
 func levelFromString(s string) Level {
