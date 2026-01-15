@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 // --- Wire format ---
@@ -25,7 +26,14 @@ type snapshotDTO struct {
 	Rows     []renderedRowDTO  `json:"rows"`
 	Marked   map[string]string `json:"marked"`   // MarkColor as string; uint64 keys stringified
 	Comments map[string]string `json:"comments"` // uint64 keys stringified
+	TimeWin  *timeWindowDTO    `json:"timeWindow,omitempty"`
 	Note     string            `json:"note,omitempty"`
+}
+
+type timeWindowDTO struct {
+	Enabled bool   `json:"enabled"`
+	Start   string `json:"start"`
+	End     string `json:"end"`
 }
 
 type metaOnlyDTO struct {
@@ -186,6 +194,11 @@ func SaveModel(m *model, path string) error {
 		Marked:   u64KeyToStringMarkMap(m.data.markedRows),
 		Comments: u64KeyToStringStringMap(m.data.commentRows),
 	}
+	dto.TimeWin = &timeWindowDTO{
+		Enabled: m.data.timeWindow.Enabled,
+		Start:   m.data.timeWindow.Start.Format(time.RFC3339Nano),
+		End:     m.data.timeWindow.End.Format(time.RFC3339Nano),
+	}
 
 	// Copy header metadata
 	if len(m.data.header) > 0 {
@@ -241,6 +254,23 @@ func LoadModel(m *model, path string) error {
 	m.data.commentRows, errComments = parseUintKeyMapString(dto.Comments)
 	if errComments != nil {
 		return errComments
+	}
+
+	// Restore time window (bounds recomputed in InitialiseUI)
+	if dto.TimeWin != nil {
+		start, err := time.Parse(time.RFC3339Nano, dto.TimeWin.Start)
+		if err != nil && dto.TimeWin.Start != "" {
+			return fmt.Errorf("invalid timeWindow start: %w", err)
+		}
+		end, err := time.Parse(time.RFC3339Nano, dto.TimeWin.End)
+		if err != nil && dto.TimeWin.End != "" {
+			return fmt.Errorf("invalid timeWindow end: %w", err)
+		}
+		m.data.timeWindow = TimeWindow{
+			Enabled: dto.TimeWin.Enabled,
+			Start:   start,
+			End:     end,
+		}
 	}
 
 	return nil

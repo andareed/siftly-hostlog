@@ -28,11 +28,11 @@ func (m *model) openTimeWindowDrawer() {
 		return
 	}
 
-	if m.data.timeWindow.Enabled {
+	if m.data.timeWindow.Start.IsZero() || m.data.timeWindow.End.IsZero() {
+		tw.draftStart, tw.draftEnd = defaultWindowBounds(m.data.timeMin, m.data.timeMax)
+	} else {
 		tw.draftStart = m.data.timeWindow.Start
 		tw.draftEnd = m.data.timeWindow.End
-	} else {
-		tw.draftStart, tw.draftEnd = defaultWindowBounds(m.data.timeMin, m.data.timeMax)
 	}
 
 	m.updateTimeWindowInputsFromDraft()

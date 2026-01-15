@@ -57,6 +57,16 @@ func (m *model) InitialiseUI() {
 		focus:      timeWindowFocusStart,
 	}
 	m.computeTimeBounds()
+	if m.data.timeWindow.Enabled && m.data.hasTimeBounds {
+		m.data.timeWindow.Start = clampTimeToBounds(m.data.timeWindow.Start, m.data.timeMin, m.data.timeMax)
+		m.data.timeWindow.End = clampTimeToBounds(m.data.timeWindow.End, m.data.timeMin, m.data.timeMax)
+		if m.data.timeWindow.Start.After(m.data.timeWindow.End) {
+			m.data.timeWindow.Start, m.data.timeWindow.End = defaultWindowBounds(m.data.timeMin, m.data.timeMax)
+		}
+	}
+	if m.data.timeWindow.Enabled {
+		m.applyFilter()
+	}
 }
 
 func (m *model) Init() tea.Cmd {
