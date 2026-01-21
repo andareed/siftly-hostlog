@@ -5,32 +5,34 @@ import (
 )
 
 type Keymap struct {
-	Quit          key.Binding
-	MarkMode      key.Binding
-	ShowMarksOnly key.Binding
-	NextMark      key.Binding
-	PrevMark      key.Binding
-	Filter        key.Binding
-	Search        key.Binding
-	ClearFilter   key.Binding
-	SearchNext    key.Binding
-	SearchPrev    key.Binding
-	ShowComment   key.Binding
-	EditComment   key.Binding
-	PageUp        key.Binding
-	PageDown      key.Binding
-	RowDown       key.Binding
-	RowUp         key.Binding
-	OpenHelp      key.Binding
-	ScrollLeft    key.Binding
-	ScrollRight   key.Binding
-	SaveToFile    key.Binding
-	ExportToFile  key.Binding
-	CopyRow       key.Binding
-	JumpToStart   key.Binding
-	JumpToEnd     key.Binding
-	JumpToLineNo  key.Binding
-	TimeWindow    key.Binding
+	Quit            key.Binding
+	MarkMode        key.Binding
+	ShowMarksOnly   key.Binding
+	NextMark        key.Binding
+	PrevMark        key.Binding
+	Filter          key.Binding
+	Search          key.Binding
+	ClearFilter     key.Binding
+	SearchNext      key.Binding
+	SearchPrev      key.Binding
+	ShowComment     key.Binding
+	EditComment     key.Binding
+	PageUp          key.Binding
+	PageDown        key.Binding
+	RowDown         key.Binding
+	RowUp           key.Binding
+	OpenHelp        key.Binding
+	ScrollLeft      key.Binding
+	ScrollRight     key.Binding
+	SaveToFile      key.Binding
+	ExportToFile    key.Binding
+	CopyRow         key.Binding
+	JumpToStart     key.Binding
+	JumpToEnd       key.Binding
+	JumpToLineNo    key.Binding
+	TimeWindow      key.Binding
+	TimeWindowStart key.Binding
+	TimeWindowEnd   key.Binding
 }
 
 var Keys = Keymap{
@@ -138,6 +140,14 @@ var Keys = Keymap{
 		key.WithKeys("t"),
 		key.WithHelp("t", "Time window"),
 	),
+	TimeWindowStart: key.NewBinding(
+		key.WithKeys(">"),
+		key.WithHelp(">", "Time window to start"),
+	),
+	TimeWindowEnd: key.NewBinding(
+		key.WithKeys("<"),
+		key.WithHelp("<", "Time window to end"),
+	),
 }
 
 func (k Keymap) Legend() []key.Binding {
@@ -165,5 +175,7 @@ func (k Keymap) Legend() []key.Binding {
 		k.JumpToEnd,
 		k.JumpToLineNo,
 		k.TimeWindow,
+		k.TimeWindowStart,
+		k.TimeWindowEnd,
 	}
 }

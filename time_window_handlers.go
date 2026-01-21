@@ -281,6 +281,65 @@ func (m *model) adjustTimeWindowStep(increase bool) {
 	m.ui.timeWindow.step = step
 }
 
+func (m *model) currentRowTime() (time.Time, bool) {
+	if !m.data.hasTimeBounds || m.cursor < 0 || m.cursor >= len(m.data.filteredIndices) {
+		return time.Time{}, false
+	}
+	rowIdx := m.data.filteredIndices[m.cursor]
+	if rowIdx < 0 || rowIdx >= len(m.data.rowHasTimes) || !m.data.rowHasTimes[rowIdx] {
+		return time.Time{}, false
+	}
+	return m.data.rowTimes[rowIdx], true
+}
+
+func (m *model) snapTimeWindowToStart() tea.Cmd {
+	ts, ok := m.currentRowTime()
+	if !ok {
+		return m.startNotice("Row has no timestamp", "warn", noticeDuration)
+	}
+	start := ts
+	end := m.data.timeMax
+	if m.data.timeWindow.Enabled && !m.data.timeWindow.End.IsZero() {
+		end = m.data.timeWindow.End
+	}
+	if end.Before(start) {
+		end = start
+	}
+	start = clampTimeToBounds(start, m.data.timeMin, m.data.timeMax)
+	end = clampTimeToBounds(end, m.data.timeMin, m.data.timeMax)
+	m.data.timeWindow = TimeWindow{
+		Enabled: true,
+		Start:   start,
+		End:     end,
+	}
+	m.applyFilter()
+	return nil
+}
+
+func (m *model) snapTimeWindowToEnd() tea.Cmd {
+	ts, ok := m.currentRowTime()
+	if !ok {
+		return m.startNotice("Row has no timestamp", "warn", noticeDuration)
+	}
+	start := m.data.timeMin
+	end := ts
+	if m.data.timeWindow.Enabled && !m.data.timeWindow.Start.IsZero() {
+		start = m.data.timeWindow.Start
+	}
+	if start.After(end) {
+		start = end
+	}
+	start = clampTimeToBounds(start, m.data.timeMin, m.data.timeMax)
+	end = clampTimeToBounds(end, m.data.timeMin, m.data.timeMax)
+	m.data.timeWindow = TimeWindow{
+		Enabled: true,
+		Start:   start,
+		End:     end,
+	}
+	m.applyFilter()
+	return nil
+}
+
 func (m *model) expandTimeWindow(delta time.Duration) {
 	tw := &m.ui.timeWindow
 	tw.errorMsg = ""

@@ -97,6 +97,8 @@ func (m *model) enterCommand(cmd Command, seed string, showHint bool, refresh bo
 			}
 		case CmdSearch:
 			m.ui.command.buf = m.ui.searchQuery
+		case CmdComment:
+			m.ui.command.buf = m.getCommentContent(m.currentRowHashID())
 		default:
 			m.ui.command.buf = ""
 		}
