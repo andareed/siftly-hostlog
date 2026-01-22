@@ -33,6 +33,7 @@ type Keymap struct {
 	TimeWindow      key.Binding
 	TimeWindowStart key.Binding
 	TimeWindowEnd   key.Binding
+	TimeWindowReset key.Binding
 }
 
 var Keys = Keymap{
@@ -148,6 +149,10 @@ var Keys = Keymap{
 		key.WithKeys("<"),
 		key.WithHelp("<", "Time window to end"),
 	),
+	TimeWindowReset: key.NewBinding(
+		key.WithKeys("T"),
+		key.WithHelp("T", "Reset time window"),
+	),
 }
 
 func (k Keymap) Legend() []key.Binding {
@@ -177,5 +182,6 @@ func (k Keymap) Legend() []key.Binding {
 		k.TimeWindow,
 		k.TimeWindowStart,
 		k.TimeWindowEnd,
+		k.TimeWindowReset,
 	}
 }

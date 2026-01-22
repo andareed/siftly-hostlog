@@ -2,6 +2,7 @@ package main
 
 import (
 	"regexp"
+	"strings"
 
 	"github.com/andareed/siftly-hostlog/logging"
 )
@@ -10,12 +11,18 @@ func (m *model) setFilterPattern(pattern string) error {
 	logging.Infof("Setting Pattern to: %s", pattern)
 	if pattern == "" {
 		m.data.filterRegex = nil
+		m.data.filterPattern = ""
 	} else {
-		re, err := regexp.Compile(pattern)
+		compilePattern := pattern
+		if !strings.HasPrefix(pattern, "(?i)") && !strings.HasPrefix(pattern, "(?-i)") {
+			compilePattern = "(?i)" + pattern
+		}
+		re, err := regexp.Compile(compilePattern)
 		if err != nil {
 			return err
 		}
 		m.data.filterRegex = re
+		m.data.filterPattern = pattern
 	}
 	m.applyFilter()
 	return nil

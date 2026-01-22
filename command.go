@@ -36,17 +36,17 @@ func commandFromPrefix(r rune) Command {
 func (m *model) commandBadge(cmd Command) string {
 	switch cmd {
 	case CmdSearch:
-		return "[SEARCH]"
+		return "[/]"
 	case CmdFilter:
-		return "[FILTER]"
+		return "[~]"
 	case CmdJump:
-		return "[JUMP]"
+		return "[:]"
 	case CmdComment:
-		return "[COMMENT]"
+		return "[#]"
 	case CmdMark:
-		return "[MARK]"
+		return "[*!]"
 	default:
-		return "[NORMAL]"
+		return "[-]"
 	}
 }
 
@@ -55,9 +55,9 @@ func (m *model) commandPrompt(cmd Command) string {
 	case CmdSearch:
 		return "search: "
 	case CmdFilter:
-		return "filter: "
+		return "regex filter: "
 	case CmdJump:
-		return "line: "
+		return "jump to line: "
 	case CmdComment:
 		return "comment: "
 	case CmdMark:
@@ -69,6 +69,8 @@ func (m *model) commandPrompt(cmd Command) string {
 
 func (m *model) commandHintsLine(cmd Command) string {
 	switch cmd {
+	case CmdFilter:
+		return "enter: apply esc: cancel (regex is defaulted to case insensitive)"
 	case CmdMark:
 		return "r/g/a: mark   c: clear   esc: cancel"
 	default:
@@ -91,7 +93,7 @@ func (m *model) enterCommand(cmd Command, seed string, showHint bool, refresh bo
 		switch cmd {
 		case CmdFilter:
 			if m.data.filterRegex != nil {
-				m.ui.command.buf = m.data.filterRegex.String()
+				m.ui.command.buf = m.data.filterPattern
 			} else {
 				m.ui.command.buf = ""
 			}

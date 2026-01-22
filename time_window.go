@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	timeInputLayout = "2006-01-02 15:04"
+	timeInputLayout = "2006-01-02 15:04:05"
 	logTimeLayout   = "Mon Jan 02 15:04:05 MST 2006"
 )
 

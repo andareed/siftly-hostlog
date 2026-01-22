@@ -18,6 +18,7 @@ type dataState struct {
 	commentRows     map[uint64]string    // map row index to string to store comments
 	showOnlyMarked  bool
 	filterRegex     *regexp.Regexp
+	filterPattern   string
 	filteredIndices []int // to store the list of indicides that match the current regex
 	timeWindow      TimeWindow
 	timeMin         time.Time

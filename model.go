@@ -257,6 +257,8 @@ func (m *model) handleViewModeKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		cmd = m.snapTimeWindowToStart()
 	case key.Matches(msg, Keys.TimeWindowEnd):
 		cmd = m.snapTimeWindowToEnd()
+	case key.Matches(msg, Keys.TimeWindowReset):
+		cmd = m.resetTimeWindow()
 	case key.Matches(msg, Keys.JumpToLineNo):
 		logging.Infof("Enabling Command: Jumping to specific line number if it exists")
 		cmd = m.enterCommand(CmdJump, "", true, false)

@@ -8,7 +8,7 @@ import (
 
 type clearNoticeMsg struct{ id int }
 
-const noticeDuration = 2 * time.Second
+const noticeDuration = 10 * time.Second
 
 func noticeText(msg, kind string) string {
 	if msg == "" {

@@ -161,6 +161,27 @@ func (m *model) resetTimeWindowDraft() {
 	}
 }
 
+func (m *model) resetTimeWindow() tea.Cmd {
+	if !m.data.hasTimeBounds {
+		return m.startNotice("No timestamps available", "warn", noticeDuration)
+	}
+
+	switch timeWindowResetMode {
+	case timeWindowResetDisable:
+		m.data.timeWindow.Enabled = false
+	case timeWindowResetToDefault:
+		start, end := defaultWindowBounds(m.data.timeMin, m.data.timeMax)
+		m.data.timeWindow = TimeWindow{
+			Enabled: true,
+			Start:   start,
+			End:     end,
+		}
+	}
+
+	m.applyFilter()
+	return nil
+}
+
 func (m *model) applyTimeWindowFromInputs() {
 	tw := &m.ui.timeWindow
 	tw.errorMsg = ""
